@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -10,6 +12,14 @@ export default defineNuxtConfig({
 
   // Configuración SSR
   ssr: true,
+
+  // Tailwind CSS v4 via Vite plugin
+  vite: {
+    plugins: [tailwindcss()]
+  },
+
+  // CSS global
+  css: ['~/assets/css/main.css'],
 
   // Configuración de TypeScript estricto
   typescript: {
@@ -28,7 +38,8 @@ export default defineNuxtConfig({
     },
     // Variables públicas (expuestas al cliente)
     public: {
-      squidexAppName: process.env.SQUIDEX_APP_NAME
+      squidexAppName: process.env.SQUIDEX_APP_NAME,
+      squidexUrl: process.env.SQUIDEX_URL || 'https://cloud.squidex.io'
     }
   },
 

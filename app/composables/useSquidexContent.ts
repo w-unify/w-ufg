@@ -76,12 +76,30 @@ export function useSquidexContentBySlug<T = any>(
 
 export function resolveSquidexField<T = any>(
   field: any,
-  language: string = 'iv'
+  language: string = 'es'
 ): T {
   if (!field) return field
   
-  if (typeof field === 'object' && field.iv !== undefined) {
-    return field[language] || field.iv
+  // Si es un objeto con estructura de idiomas de Squidex
+  if (typeof field === 'object' && !Array.isArray(field)) {
+    // Intentar con el idioma solicitado
+    if (field[language] !== undefined) {
+      return field[language]
+    }
+    
+    // Fallback: intentar con idiomas comunes
+    const fallbackLanguages = ['es', 'en', 'iv']
+    for (const lang of fallbackLanguages) {
+      if (field[lang] !== undefined) {
+        return field[lang]
+      }
+    }
+    
+    // Si no encuentra ninguno, usar el primer valor disponible
+    const keys = Object.keys(field)
+    if (keys.length > 0) {
+      return field[keys[0]]
+    }
   }
   
   return field

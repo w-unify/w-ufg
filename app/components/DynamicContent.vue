@@ -12,14 +12,29 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const componentMap: Record<string, any> = {
-  HeroSection: resolveComponent('HeroSection'),
-  TextBlock: resolveComponent('TextBlock'),
-  ImageBlock: resolveComponent('ImageBlock'),
-  CardGrid: resolveComponent('CardGrid')
+  // Home
+  HomeHeroHome: resolveComponent('HomeHeroHome'),
+  HomeIntroSection: resolveComponent('HomeIntroSection'),
+  HomeAccessCards: resolveComponent('HomeAccessCards'),
+  HomeAboutSection: resolveComponent('HomeAboutSection'),
+  HomeStatsCounter: resolveComponent('HomeStatsCounter'),
+  HomeAllianceSection: resolveComponent('HomeAllianceSection'),
+  HomeAccreditationsSection: resolveComponent('HomeAccreditationsSection'),
+  // Carrera
+  CarreraCareerHero: resolveComponent('CarreraCareerHero'),
+  CarreraDiscoverCareer: resolveComponent('CarreraDiscoverCareer'),
+  CarreraDualDegreeSection: resolveComponent('CarreraDualDegreeSection'),
+  CarreraAdmissionCards: resolveComponent('CarreraAdmissionCards'),
+  CarreraSemesterCost: resolveComponent('CarreraSemesterCost'),
+  CarreraScholarshipsAccordion: resolveComponent('CarreraScholarshipsAccordion')
 }
 
 function getComponent(type: string) {
-  return componentMap[type] || resolveComponent('UnknownComponent')
+  const comp = componentMap[type]
+  if (!comp) {
+    console.warn(`[DynamicContent] Unknown component type: "${type}"`)
+  }
+  return comp || 'div'
 }
 
 function resolveComponentData(component: SquidexComponentData) {
@@ -38,7 +53,7 @@ function resolveComponentData(component: SquidexComponentData) {
 </script>
 
 <template>
-  <div class="dynamic-content">
+  <div class="w-full">
     <component
       v-for="(comp, index) in components"
       :key="`component-${index}-${comp.type}`"
@@ -47,9 +62,3 @@ function resolveComponentData(component: SquidexComponentData) {
     />
   </div>
 </template>
-
-<style scoped>
-.dynamic-content {
-  width: 100%;
-}
-</style>

@@ -13,6 +13,10 @@ interface Props {
   disclaimers?: string[]
 }
 
+function renderMarkdown(text: string): string {
+  return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+}
+
 withDefaults(defineProps<Props>(), {
   title: 'Valor del semestre',
   items: () => [
@@ -60,9 +64,12 @@ withDefaults(defineProps<Props>(), {
       </div>
 
       <div class="max-w-[850px] mx-auto mt-4 space-y-3">
-        <p v-for="(note, index) in disclaimers" :key="index" class="text-[13px] xl:text-[15px] leading-relaxed text-dark/70">
-          {{ note }}
-        </p>
+        <p
+          v-for="(note, index) in disclaimers"
+          :key="index"
+          class="text-[13px] xl:text-[15px] leading-relaxed text-dark/70"
+          v-html="renderMarkdown(note)"
+        />
       </div>
     </div>
   </section>

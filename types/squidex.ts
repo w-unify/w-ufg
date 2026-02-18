@@ -154,14 +154,88 @@ export interface FooterData extends SquidexData {
 
 export type HomePageContent = SquidexContent<HomePageData>
 
+// --- MODALIDADES ---
+export interface ModalidadData extends SquidexData {
+  modalidadNombre: SquidexLanguageField<string>
+}
+
+// --- FACULTADES ---
+export interface FacultadData extends SquidexData {
+  facultadNombre: SquidexLanguageField<string>
+}
+
+// --- TIPOS DE TITULACIÓN ---
+export interface TipoTitulacionData extends SquidexData {
+  tipoTitulacionNombre: SquidexLanguageField<string>
+}
+
+// --- CARRERAS ---
+export interface MateriaData extends SquidexData {
+  nombre: SquidexLanguageField<string>
+  codigo: SquidexLanguageField<string>
+  esASU: SquidexLanguageField<boolean>
+}
+
+export interface PensumMateriaResolved {
+  nombre: string
+  esASU: boolean
+}
+
+export interface PensumCiclo {
+  nombreCiclo: string
+  esASU?: boolean
+  MateriasDelCiclo: string[]
+}
+
+export interface PensumCicloResolved {
+  nombreCiclo: string
+  esASU: boolean
+  materias: PensumMateriaResolved[]
+}
+
+export interface EnQueTrabajarItem {
+  texto: string
+}
+
+export interface EnQueTrabajarData {
+  schemaId: string
+  titulo: string
+  items: EnQueTrabajarItem[]
+}
+
+export interface ValorSemestreFilaCosto {
+  concepto: string
+  monto: string
+}
+
+export interface ValorSemestreData {
+  schemaId: string
+  tituloSeccion: string
+  filasCostos: ValorSemestreFilaCosto[]
+  totalTexto: string
+  totalMonto: string
+  notasLegales: string
+}
+
 export interface CareerData extends SquidexData {
-  title: SquidexLanguageField<string>
   slug: SquidexLanguageField<string>
-  description: SquidexLanguageField<string>
-  heroImage: SquidexLanguageField<string[]>
-  modality: SquidexLanguageField<string>
-  asuEnriched: SquidexLanguageField<boolean>
-  duration: SquidexLanguageField<string>
+  nombre: SquidexLanguageField<string>
+  descripcionCorta: SquidexLanguageField<string>
+  'modalidad-ref': SquidexLanguageField<string[]>
+  'facultad-ref': SquidexLanguageField<string[]>
+  'tiposTitulacion-ref': SquidexLanguageField<string[]>
+  esASU: SquidexLanguageField<boolean>
+  duracion: SquidexLanguageField<string>
+  'de-que-trata': SquidexLanguageField<string>
+  'que-vas-aprender': SquidexLanguageField<string>
+  'que-vas-aprender-img': SquidexLanguageField<string[]>
+  'en-que-trabajar': SquidexLanguageField<EnQueTrabajarData>
+  'doble-titulo-nombre': SquidexLanguageField<string>
+  'doble-titulacion-img': SquidexLanguageField<string[]>
+  pensum: SquidexLanguageField<PensumCiclo[]>
+  pensumBtnNombre: SquidexLanguageField<string>
+  pensumBtnUrl: SquidexLanguageField<string>
+  valorSemestre: SquidexLanguageField<ValorSemestreData>
   degree: SquidexLanguageField<string>
   aboutText: SquidexLanguageField<string>
   learnTitle: SquidexLanguageField<string>
@@ -182,3 +256,31 @@ export interface CareerData extends SquidexData {
 }
 
 export type CareerContent = SquidexContent<CareerData>
+
+// --- DETALLES CARRERA ---
+export interface BecaFinanciamientoItem {
+  titulo: string
+  parrafo: string
+  imagen: string[]
+}
+
+export interface BecaFinanciamientoData {
+  schemaId: string
+  titulo: string
+  items: BecaFinanciamientoItem[]
+}
+
+export interface TestimonioEgresado {
+  linkVideo: string
+  nombreEgresado: string
+  profesionEgresado: string
+  fotoEgresado: string[]
+}
+
+export interface DetalleCarreraData extends SquidexData {
+  'carreras-ref': SquidexLanguageField<string[]>
+  becasFinanciamientos: SquidexLanguageField<BecaFinanciamientoData>
+  testimoniosEgresados: SquidexLanguageField<TestimonioEgresado[]>
+}
+
+export type DetalleCarreraContent = SquidexContent<DetalleCarreraData>

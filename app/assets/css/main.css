@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/preflight" layer(base);
+@import "tailwindcss/utilities" layer(utilities);
 
 /* ============================================================
    1. BASES (Fuentes y Párrafos)
@@ -21,6 +23,8 @@
    2. THEME, ANIMACIONES Y BORDES
    ============================================================ */
 @theme {
+  --color-white: #ffffff;
+  --color-black: #000000;
   --color-primary: #163D6C;
   --color-secondary: #F18A03;
   --color-accent: #1E73B9;
@@ -28,8 +32,12 @@
   --color-dark: #222222;
   --color-muted: #F2F2F2;
   --color-asu2: #FFC73E;
+  --color-gray-100: #f3f4f6;
+  --color-gray-500: #6b7280;
 
   --shadow-card: 0 4px 6px 0 rgb(0 0 0 / 0.25);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --font-futura: "Futura", system-ui, sans-serif;
   --font-futura-bold: "Futura LT", sans-serif;
 
@@ -53,6 +61,7 @@
 @utility rounded-listing-card { border-radius: 15px; @media (min-width: 1280px) { border-radius: 20px; } }
 @utility rounded-listing-img { border-radius: 7px; @media (min-width: 1280px) { border-radius: 10px; } }
 @utility rounded-box { border-radius: 5px; @media (min-width: 1280px) { border-radius: 10px; } }
+@utility label-radius { border-radius: 0 0 0 12px; }
 
 /* Tallas de Botón */
 @utility btn-lg {
@@ -230,6 +239,23 @@
       content: '';
       @apply absolute top-full right-2 border-4 border-transparent border-t-dark;
     }
+  }
+
+  /* === FILTROS OFERTA ACADÉMICA === */
+  .filter-dropdown-btn {
+    @apply w-full bg-white border border-dark/10 rounded-xl px-5 py-3 flex items-center justify-between hover:border-primary transition-all cursor-pointer;
+  }
+  
+  .filter-dropdown-content {
+    @apply absolute top-full left-0 w-full mt-2 bg-white border border-dark/10 rounded-xl shadow-xl py-2 z-[500] max-h-[300px] overflow-y-auto;
+  }
+  
+  .filter-option {
+    @apply flex items-center px-5 py-2.5 hover:bg-primary/5 cursor-pointer transition-colors;
+  }
+  
+  .filter-checkbox {
+    @apply w-4 h-4 rounded border-dark/20 text-primary focus:ring-primary cursor-pointer;
   }
 
   /* === ACCORDION === */

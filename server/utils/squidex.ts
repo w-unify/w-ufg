@@ -59,12 +59,17 @@ export async function fetchSquidexContent<T = any>(
   const queryString = params ? new URLSearchParams(params as Record<string, string>).toString() : ''
   const endpoint = `${url}/api/content/${appName}/${schema}${queryString ? `?${queryString}` : ''}`
 
+  console.log(`[Squidex] Fetching schema: ${schema}`)
+  console.log(`[Squidex] Full URL: ${endpoint}`)
+
   try {
     const response = await $fetch<SquidexListResponse<T>>(endpoint, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
+    
+    console.log(`[Squidex] Response for ${schema}: ${response.total} items`)
 
     return response
   } catch (error) {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import type { HeaderData } from '~/types/squidex'
+import type { HeaderData, CareerData } from '~/types/squidex'
 import { useSquidexContent, resolveSquidexField } from '~/composables/useSquidexContent'
 
 const topBarVisible = ref(true)
@@ -37,6 +37,49 @@ const linkUVirtual = computed(() => resolveSquidexField<string>(header.value?.li
 const linkTramites = computed(() => resolveSquidexField<string>(header.value?.linkTramites, 'es') || 'https://www.ufg.edu.sv/tramites-en-linea/')
 const nombreBtn = computed(() => resolveSquidexField<string>(header.value?.nombreBtn, 'es') || 'APLICAR')
 const linkBtnAplicar = computed(() => resolveSquidexField<string>(header.value?.linkBtnAplicar, 'es') || 'https://admisiones.ufg.edu.sv/solicitud/')
+
+// Buscador de carreras
+const { content: carrerasContent } = useSquidexContent<CareerData>('carreras', { $top: 100 })
+const searchQuery = ref('')
+const searchOpen = ref(false)
+const searchRef = ref<HTMLElement | null>(null)
+const router = useRouter()
+
+const carrerasFiltradas = computed(() => {
+  const q = searchQuery.value.trim().toLowerCase()
+  if (!q || q.length < 2) return []
+  return (carrerasContent.value || []).map(c => ({
+    nombre: resolveSquidexField<string>(c.data.nombre, 'es') || '',
+    slug: resolveSquidexField<string>(c.data.slug, 'es') || ''
+  })).filter(c => c.nombre.toLowerCase().includes(q)).slice(0, 8)
+})
+
+const onSearchInput = () => {
+  searchOpen.value = true
+}
+
+const selectCarrera = (slug: string) => {
+  searchQuery.value = ''
+  searchOpen.value = false
+  router.push(`/carreras/${slug}`)
+}
+
+const handleClickOutsideSearch = (e: MouseEvent) => {
+  if (searchRef.value && !searchRef.value.contains(e.target as Node)) {
+    searchOpen.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  handleScroll()
+  document.addEventListener('click', handleClickOutsideSearch)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+  document.removeEventListener('click', handleClickOutsideSearch)
+})
 </script>
 
 <template>
@@ -77,16 +120,35 @@ const linkBtnAplicar = computed(() => resolveSquidexField<string>(header.value?.
           </a>
         </div>
 
-        <div class="relative w-full">
+        <div ref="searchRef" class="relative w-full">
           <div class="relative flex items-center">
             <div class="absolute left-4 w-4 h-4 flex items-center justify-center pointer-events-none">
               <img src="/img/carreras/search-line.svg" class="w-full h-full invert opacity-60" alt="search">
             </div>
             <input 
+              v-model="searchQuery"
               type="text" 
-              placeholder="Buscar..." 
+              placeholder="Buscar carrera..." 
               class="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-11 pr-4 text-white text-xs placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
+              @input="onSearchInput"
+              @focus="searchOpen = true"
+              autocomplete="off"
             >
+          </div>
+          <!-- Dropdown resultados -->
+          <div 
+            v-if="searchOpen && carrerasFiltradas.length > 0"
+            class="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl overflow-hidden z-[200] border border-dark/10"
+          >
+            <button
+              v-for="carrera in carrerasFiltradas"
+              :key="carrera.slug"
+              @click="selectCarrera(carrera.slug)"
+              class="w-full text-left px-4 py-3 text-dark text-sm hover:bg-primary/5 hover:text-primary transition-colors border-b border-dark/5 last:border-0 flex items-center gap-3"
+            >
+              <img src="/img/carreras/search-line.svg" class="w-3.5 h-3.5 opacity-30 shrink-0" alt="">
+              <span>{{ carrera.nombre }}</span>
+            </button>
           </div>
         </div>
       </div>

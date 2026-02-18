@@ -258,6 +258,28 @@
     @apply w-4 h-4 rounded border-dark/20 text-primary focus:ring-primary cursor-pointer;
   }
 
+  /* === ADMISIONES: TABS === */
+  .tab-btn {
+    @apply flex items-center justify-between w-full px-6 py-2 xl:py-4 rounded-xl leading-[1.1] font-futura-bold text-sm transition-all duration-300 bg-white text-dark text-center xl:text-left border border-transparent;
+  }
+  .tab-btn.active {
+    @apply bg-accent text-white shadow-lg;
+  }
+  .tab-btn:not(.active):hover {
+    @apply border-primary/20 text-primary;
+  }
+
+  /* === ADMISIONES: STEP CARDS === */
+  .step-card {
+    @apply flex items-start gap-4 bg-white p-3 xl:p-5 rounded-xl border border-dark/5;
+  }
+  .step-number {
+    @apply w-10 h-10 shrink-0 bg-primary text-white rounded-full flex items-center justify-center font-futura-bold text-base xl:text-xl;
+  }
+  .step-body {
+    @apply text-base leading-relaxed flex-1;
+  }
+
   /* === ACCORDION === */
   .accordion-item.active .accordion-header {
     @apply bg-white;

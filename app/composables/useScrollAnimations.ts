@@ -60,41 +60,68 @@ export function useScrollAnimations() {
 }
 
 export function useCounterAnimation() {
-  const setupCounters = () => {
+  let intersectionObserver: IntersectionObserver | null = null
+  let mutationObserver: MutationObserver | null = null
+  const observed = new WeakSet<Element>()
+
+  const animateCounter = (el: HTMLElement) => {
+    if (observed.has(el)) return
+    observed.add(el)
+    const target = parseInt(el.getAttribute('data-target') || '0')
+    const step = parseInt(el.getAttribute('data-step') || '1')
+    let count = 0
+    const updateCount = () => {
+      if (count < target) {
+        count = Math.min(count + step, target)
+        el.innerText = String(count)
+        setTimeout(updateCount, 50)
+      } else {
+        el.innerText = String(target)
+      }
+    }
+    updateCount()
+  }
+
+  const observeCounter = (el: Element) => {
+    if (observed.has(el) || !intersectionObserver) return
+    intersectionObserver.observe(el)
+  }
+
+  const setup = () => {
     if (typeof window === 'undefined') return
 
-    const counters = document.querySelectorAll('.js-counter')
-
-    const observer = new IntersectionObserver((entries) => {
+    intersectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          const el = entry.target as HTMLElement
-          const target = parseInt(el.getAttribute('data-target') || '0')
-          const step = parseInt(el.getAttribute('data-step') || '1')
-          let count = 0
-
-          const updateCount = () => {
-            if (count < target) {
-              count += step
-              el.innerText = String(count > target ? target : count)
-              setTimeout(updateCount, 50)
-            } else {
-              el.innerText = String(target)
-            }
-          }
-
-          updateCount()
-          observer.unobserve(el)
+          animateCounter(entry.target as HTMLElement)
+          intersectionObserver?.unobserve(entry.target)
         }
       })
     }, { threshold: 0.5 })
 
-    counters.forEach(counter => observer.observe(counter))
+    // Observar los que ya existen
+    document.querySelectorAll('.js-counter').forEach(observeCounter)
+
+    // MutationObserver: detectar .js-counter que aparecen después (datos async)
+    mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType !== 1) return
+          const el = node as Element
+          if (el.matches?.('.js-counter')) observeCounter(el)
+          el.querySelectorAll?.('.js-counter').forEach(observeCounter)
+        })
+      })
+    })
+    mutationObserver.observe(document.body, { childList: true, subtree: true })
   }
 
-  onMounted(() => {
-    nextTick(() => {
-      setupCounters()
-    })
+  onMounted(() => nextTick(setup))
+
+  onUnmounted(() => {
+    intersectionObserver?.disconnect()
+    mutationObserver?.disconnect()
+    intersectionObserver = null
+    mutationObserver = null
   })
 }

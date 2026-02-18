@@ -43,7 +43,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="pt-16 pb-8 xl:pt-32 xl:pb-16 overflow-hidden">
+  <section class="pt-16 pb-8 xl:pt-32 xl:pb-16">
     <div class="container mx-auto max-w-[1400px] px-6">
       <h2 class="heading-2 text-primary mb-12 reveal">{{ sectionTitle }}</h2>
 

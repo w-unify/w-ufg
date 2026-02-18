@@ -56,15 +56,17 @@ export default defineEventHandler(async (event) => {
     }
 
     // 3. Buscar el detalle-carrera que referencia esta carrera por su ID
+    // Squidex no soporta contains/eq en arrays de referencias, traemos todos y filtramos en memoria
     let detalle = null
     try {
-      const detalles = await fetchSquidexContent<DetalleCarreraData>('detalles-carrera', {
-        $filter: `data/carreras-ref/iv contains '${carrera.id}'`,
-        $top: 1
-      })
-      detalle = detalles.items[0] || null
+      const detalles = await fetchSquidexContent<DetalleCarreraData>('detalles-carrera', { $top: 100 })
+      detalle = detalles.items.find(item => {
+        const refs: string[] = item.data?.['carreras-ref']?.iv || item.data?.['carreras-ref']?.es || []
+        return refs.includes(carrera!.id)
+      }) || null
+      console.log(`[detalle-carrera] detalle encontrado: ${detalle ? detalle.id : 'ninguno'}`)
     } catch {
-      // Si falla el filtro de detalles, continuar sin detalle
+      // Si falla, continuar sin detalle
     }
 
     // 4. Resolver pensum: cada MateriasDelCiclo contiene UUIDs de referencias al schema "materias"
@@ -92,12 +94,22 @@ export default defineEventHandler(async (event) => {
           })
         )
 
+        // Log raw del primer ciclo para ver estructura de esASU
+        console.log(`[detalle-carrera] pensumRaw[0] raw:`, JSON.stringify(pensumRaw[0]))
+        if (pensumRaw.length > 2) console.log(`[detalle-carrera] pensumRaw[2] raw:`, JSON.stringify(pensumRaw[2]))
+
         // Construir pensum resuelto
         pensumResuelto = pensumRaw.map(ciclo => ({
           nombreCiclo: ciclo.nombreCiclo,
-          esASU: ciclo.esASU ?? false,
-          materias: (ciclo.MateriasDelCiclo || []).map(id => materiasMap.get(id) ?? { nombre: id, esASU: false })
+          esASU: (ciclo.esASU as any) === true || (ciclo.esASU as any) === 'true' || (ciclo.esASU as any)?.iv === true || false,
+          materias: (ciclo.MateriasDelCiclo || []).map((id: string) => materiasMap.get(id) ?? { nombre: id, esASU: false })
         }))
+
+        // DEBUG: log pensum resuelto
+        console.log(`[detalle-carrera] pensumResuelto ciclos: ${pensumResuelto.length}`)
+        pensumResuelto.forEach(ciclo => {
+          console.log(`[detalle-carrera] Ciclo "${ciclo.nombreCiclo}" esASU=${ciclo.esASU} materias:`, JSON.stringify(ciclo.materias))
+        })
       }
     } catch {
       // continuar sin pensum resuelto

@@ -91,7 +91,15 @@ const becas = computed(() => {
 })
 
 // --- Testimonios ---
-const testimonios = computed(() => resolveSquidexField<any[]>(detalle.value?.testimoniosEgresados, 'es') || [])
+const testimonios = computed(() => {
+  const raw = resolveSquidexField<any[]>(detalle.value?.testimoniosEgresados, 'es') || []
+  return raw.map((t: any) => ({
+    linkVideo: t.linkVideo || '',
+    nombreEgresado: t.nombreEgresado || '',
+    profesionEgresado: t.profesionEgresado || '',
+    fotoEgresado: firstAssetUrl(t.fotoEgresado) || ''
+  }))
+})
 
 useHead({
   title: computed(() => heroTitle.value ? `${heroTitle.value} - UFG` : 'Carrera - UFG'),
@@ -171,6 +179,11 @@ useHead({
         v-if="becas"
         :section-title="becas.sectionTitle"
         :items="becas.items"
+      />
+
+      <CarreraTestimoniosEgresados
+        v-if="testimonios.length > 0"
+        :items="testimonios"
       />
     </template>
   </div>

@@ -1,12 +1,16 @@
 <script setup lang="ts">
+interface Boton {
+  texto: string
+  enlace: string
+}
+
 interface Props {
   titulo?: string
   subtitulo?: string
   descripcion?: string
   areas?: string[]
   pasos?: string[]
-  telefono?: string
-  email?: string
+  botones?: Boton[]
 }
 
 withDefaults(defineProps<Props>(), {
@@ -20,8 +24,10 @@ withDefaults(defineProps<Props>(), {
     'Hacer cita previa para la realización de la prueba.',
     'Conectarse puntualmente en fecha y hora concertada. (Presentar factura de OV).'
   ],
-  telefono: '2209-2873',
-  email: 'hsiguenza@ufg.edu.sv'
+  botones: () => [
+    { texto: '2209-2873', enlace: 'tel:22092873' },
+    { texto: 'hsiguenza@ufg.edu.sv', enlace: 'mailto:hsiguenza@ufg.edu.sv' }
+  ]
 })
 </script>
 
@@ -62,12 +68,13 @@ withDefaults(defineProps<Props>(), {
         <div class="reveal delay-400">
           <h4 class="font-futura-bold text-dark text-xl xl:text-2xl mb-6">Agenda tu cita:</h4>
           <div class="flex flex-row flex-wrap items-start justify-start gap-3 xl:gap-4">
-            <a v-if="telefono" :href="`tel:${telefono}`" class="btn-primary btn-sm w-auto group inline-flex">
-              <span>{{ telefono }}</span>
-              <div class="btn-circle"></div>
-            </a>
-            <a v-if="email" :href="`mailto:${email}`" class="btn-primary btn-sm w-auto group inline-flex">
-              <span>{{ email }}</span>
+            <a
+              v-for="(btn, i) in botones"
+              :key="i"
+              :href="btn.enlace"
+              class="btn-primary btn-sm w-auto group inline-flex"
+            >
+              <span>{{ btn.texto }}</span>
               <div class="btn-circle"></div>
             </a>
           </div>

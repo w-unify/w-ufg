@@ -73,7 +73,7 @@ onMounted(() => {
               class="shrink-0"
               :style="{ width: `calc(${100 / slidesPerView}% - ${(slidesPerView - 1) * 20 / slidesPerView}px)` }"
             >
-              <div class="bg-muted rounded-card p-5 xl:p-6 h-full flex flex-col text-center reveal" :class="`delay-${(index + 1) * 100}`">
+              <div class="bg-muted rounded-card p-5 xl:p-6 h-full flex flex-col text-center xl:text-left reveal" :class="`delay-${(index + 1) * 100}`">
                 <span class="text-center text-xs xl:text-sm tracking-[0.2em] text-dark/60 uppercase mb-3 block border-b border-dark/10 pb-2">
                   {{ paso.numero }}
                 </span>
@@ -81,9 +81,12 @@ onMounted(() => {
                   {{ paso.titulo }}
                 </h3>
                 <div class="flex items-start mt-auto min-h-16 xl:min-h-24">
-                  <p class="text-sm xl:text-base text-left leading-[1.3] text-dark">
-                    {{ paso.descripcion }}
-                  </p>
+                  <div class="flex items-center gap-3">
+                    <img v-if="paso.icono" :src="paso.icono" :alt="paso.titulo" class="w-6 h-6 xl:w-8 xl:h-8 shrink-0">
+                    <p class="text-sm xl:text-base text-left leading-[1.3] text-dark">
+                      {{ paso.descripcion }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </article>

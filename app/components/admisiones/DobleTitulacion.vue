@@ -126,12 +126,12 @@ const props = withDefaults(defineProps<Props>(), {
           </div>
         </div>
 
-        <div class="max-w-[850px] mx-auto mt-6 space-y-3 reveal delay-300">
-          <p class="font-futura-bold text-dark">Importante:</p>
-          <ol class="list-decimal list-outside pl-5 space-y-2">
-            <li v-for="(nota, i) in notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">{{ nota }}</li>
-          </ol>
-          <div class="pt-4 space-y-3">
+        <div v-if="notas?.length || politicas?.length" class="max-w-[850px] mx-auto mt-4 reveal delay-300">
+          <div v-if="notas?.length" class="space-y-4 mb-6">
+            <p class="font-futura-bold text-dark">Importante:</p>
+            <p v-for="(nota, i) in notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">{{ nota }}</p>
+          </div>
+          <div v-if="politicas?.length" class="space-y-3">
             <p class="font-futura-bold text-dark/70 text-sm xl:text-base">Políticas del programa:</p>
             <p v-for="(pol, i) in politicas" :key="i" class="text-[13px] xl:text-[15px] leading-relaxed text-dark/70">{{ pol }}</p>
           </div>

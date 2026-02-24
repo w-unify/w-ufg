@@ -47,9 +47,9 @@ withDefaults(defineProps<Props>(), {
     <div class="container mx-auto max-w-[1200px] px-6">
       <h2 class="heading-2 text-center text-primary mb-12 xl:mb-16 reveal">{{ sectionTitle }}</h2>
 
-      <div class="flex flex-col xl:flex-row gap-5 xl:gap-8">
+      <div class="flex flex-col xl:flex-row gap-5 xl:gap-4">
         <!-- Label lateral -->
-        <div class="hidden xl:block w-[280px] shrink-0">
+        <div class="hidden xl:block w-[300px] shrink-0">
           <div class="sticky top-[130px]">
             <div class="tab-btn active w-full flex items-center justify-between cursor-default">
               <span>Postgrado</span>

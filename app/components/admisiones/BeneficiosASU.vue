@@ -10,6 +10,7 @@ interface Props {
   beneficios?: Beneficio[]
   ctaText?: string
   ctaLink?: string
+  logoUrl?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -54,6 +55,10 @@ onMounted(() => {
   <section class="py-16 xl:py-24 bg-primary overflow-hidden">
     <div class="container mx-auto px-6 text-center">
       <h2 class="heading-2 !text-white reveal">{{ sectionTitle }}</h2>
+
+      <div v-if="logoUrl" class="flex justify-center items-center gap-6 mt-6 reveal delay-100">
+        <img :src="logoUrl" class="w-32 h-32 object-contain" alt="UFG y ASU">
+      </div>
 
       <div class="relative max-w-[1200px] mx-auto px-10 xl:px-14 mt-8 reveal delay-200">
         <div class="overflow-hidden w-full">

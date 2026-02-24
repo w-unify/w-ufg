@@ -99,12 +99,12 @@ const activeTab = ref(props.tabs?.[0]?.id ?? '')
               </div>
 
               <div v-if="tab.notas && tab.notas.length > 0" class="pt-2">
-                <p class="font-futura-bold text-dark mb-3">Importante:</p>
-                <ol class="space-y-3 list-decimal list-outside pl-5">
-                  <li v-for="(nota, i) in tab.notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">
+                <!-- <p class="font-futura-bold text-dark mb-3">Importante:</p> -->
+                <div class="space-y-4">
+                  <p v-for="(nota, i) in tab.notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">
                     {{ nota }}
-                  </li>
-                </ol>
+                  </p>
+                </div>
               </div>
             </div>
           </template>

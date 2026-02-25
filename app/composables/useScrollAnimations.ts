@@ -1,3 +1,5 @@
+import { onMounted, onUnmounted, nextTick } from 'vue'
+
 export function useScrollAnimations() {
   let intersectionObserver: IntersectionObserver | null = null
   let mutationObserver: MutationObserver | null = null

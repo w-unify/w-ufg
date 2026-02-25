@@ -78,7 +78,7 @@ const linkYoutube = computed(() => resolveSquidexField<string>(footer.value?.lin
           <a href="#" class="hover:scale-110 transition-transform"><img src="/img/globals/radio.webp" alt="Radio" class="w-6 h-6 xl:w-8 xl:h-8"></a>
         </div>
         <nav class="flex flex-wrap justify-center gap-5 xl:gap-10 text-dark font-futura-bold text-xs xl:text-base tracking-wide">
-          <NuxtLink to="/sobre-la-universidad" class="hover:text-accent transition-colors">Sobre la Universidad</NuxtLink>
+          <NuxtLink to="/institucion" class="hover:text-accent transition-colors">Sobre la Universidad</NuxtLink>
           <NuxtLink to="/investigacion" class="hover:text-accent transition-colors">Investigación</NuxtLink>
           <NuxtLink to="/rsu" class="hover:text-accent transition-colors">RSU</NuxtLink>
           <NuxtLink to="/blog" class="hover:text-accent transition-colors">Blog</NuxtLink>

@@ -16,10 +16,12 @@ export default defineEventHandler(async (event) => {
   try {
     const content = await fetchSquidexContent(schema, params)
     return content
-  } catch (error) {
+  } catch (error: any) {
+    console.error('[Squidex API Error]', error)
     throw createError({
       statusCode: 500,
-      message: 'Failed to fetch content from Squidex'
+      message: error?.message || 'Failed to fetch content from Squidex',
+      data: process.env.NODE_ENV === 'development' ? error : undefined
     })
   }
 })

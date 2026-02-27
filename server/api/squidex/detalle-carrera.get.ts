@@ -12,36 +12,38 @@ export default defineEventHandler(async (event) => {
   try {
     console.log(`[detalle-carrera] Buscando slug: "${slug}"`)
 
-    // Buscar en múltiples idiomas: iv, es, en
-    const idiomas = ['iv', 'es', 'en']
+    // Buscar carrera usando filtro OData para mejor performance
+    const slugNorm = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    
+    // Intentar búsqueda directa primero (más rápido)
     let carrera = null
-
-    for (const lang of idiomas) {
-      carrera = await fetchSquidexContentBySlug<CareerData>('carreras', slug, lang)
-      if (carrera) {
-        console.log(`[detalle-carrera] Encontrada en idioma "${lang}": ${carrera.id}`)
-        break
-      }
+    try {
+      const result = await fetchSquidexContent<CareerData>('carreras', { 
+        $filter: `data/slug/iv eq '${slug}' or data/slug/es eq '${slug}' or data/slug/en eq '${slug}'`,
+        $top: 1
+      })
+      carrera = result.items[0] || null
+    } catch (e) {
+      console.log(`[detalle-carrera] Búsqueda directa falló, intentando normalizada`)
     }
 
-    // Si no encontró, buscar todas las carreras y comparar slug normalizado (sin tildes)
+    // Si no encontró, buscar todas y normalizar (fallback)
     if (!carrera) {
-      console.log(`[detalle-carrera] No encontrada por slug exacto, buscando por slug normalizado...`)
       const todas = await fetchSquidexContent<CareerData>('carreras', { $top: 200 })
-      const slugNorm = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
       carrera = todas.items.find(item => {
         const s = item.data?.slug
         const val = s?.iv || s?.es || s?.en || ''
         const valNorm = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
         return valNorm === slugNorm
       }) || null
-      if (carrera) console.log(`[detalle-carrera] Encontrada por slug normalizado: ${carrera.id}`)
     }
 
     if (!carrera) {
       console.log(`[detalle-carrera] No encontrada con slug "${slug}"`)
       throw createError({ statusCode: 404, message: `Carrera con slug "${slug}" no encontrada` })
     }
+    
+    console.log(`[detalle-carrera] Carrera encontrada: ${carrera.id}`)
 
     // 2. Resolver nombre de modalidad
     let modalidadNombre = ''
@@ -76,23 +78,31 @@ export default defineEventHandler(async (event) => {
       if (pensumRaw.length > 0) {
         // Recolectar todos los IDs únicos de materias
         const todosIds = [...new Set(pensumRaw.flatMap(c => c.MateriasDelCiclo || []))]
+        console.log(`[detalle-carrera] Resolviendo ${todosIds.length} materias únicas`)
 
-        // Resolver todas las materias en paralelo
+        // Resolver todas las materias en paralelo con límite de concurrencia
         const materiasMap = new Map<string, { nombre: string; esASU: boolean }>()
-        await Promise.all(
-          todosIds.map(async (id) => {
-            try {
-              const materia = await fetchSquidexContentById<MateriaData>('materias', id)
-              if (materia) {
-                const nombre = materia.data?.nombre?.iv || materia.data?.nombre?.es || ''
-                const esASU = materia.data?.esASU?.iv ?? materia.data?.esASU?.es ?? false
-                materiasMap.set(id, { nombre, esASU })
+        
+        // Procesar en lotes de 10 para evitar sobrecarga
+        const batchSize = 10
+        for (let i = 0; i < todosIds.length; i += batchSize) {
+          const batch = todosIds.slice(i, i + batchSize)
+          await Promise.all(
+            batch.map(async (id) => {
+              try {
+                const materia = await fetchSquidexContentById<MateriaData>('materias', id)
+                if (materia) {
+                  const nombre = materia.data?.nombre?.iv || materia.data?.nombre?.es || ''
+                  const esASU = materia.data?.esASU?.iv ?? materia.data?.esASU?.es ?? false
+                  materiasMap.set(id, { nombre, esASU })
+                }
+              } catch (err) {
+                console.error(`[detalle-carrera] Error resolviendo materia ${id}:`, err)
               }
-            } catch {
-              // ignorar materias que fallen
-            }
-          })
-        )
+            })
+          )
+        }
+        console.log(`[detalle-carrera] Materias resueltas: ${materiasMap.size}/${todosIds.length}`)
 
         // Log raw del primer ciclo para ver estructura de esASU
         console.log(`[detalle-carrera] pensumRaw[0] raw:`, JSON.stringify(pensumRaw[0]))
@@ -122,7 +132,14 @@ export default defineEventHandler(async (event) => {
       pensumResuelto
     }
   } catch (error: any) {
+    console.error(`[detalle-carrera] Error:`, error)
     if (error.statusCode === 404) throw error
-    throw createError({ statusCode: 500, message: 'Error al obtener detalle de carrera' })
+    
+    // Exponer mensaje real en desarrollo
+    const isDev = process.env.NODE_ENV === 'development'
+    throw createError({ 
+      statusCode: 500, 
+      message: isDev ? `Error al obtener detalle de carrera: ${error.message}` : 'Error al obtener detalle de carrera'
+    })
   }
 })

@@ -5,6 +5,7 @@ import { useSquidexContent, resolveSquidexField } from '~/composables/useSquidex
 
 const topBarVisible = ref(true)
 const navbarShadow = ref(false)
+const mobileMenuOpen = ref(false)
 
 const handleScroll = () => {
   const scrollY = window.scrollY
@@ -70,6 +71,15 @@ const handleClickOutsideSearch = (e: MouseEvent) => {
   }
 }
 
+const toggleMobileMenu = () => {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+  if (mobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
   handleScroll()
@@ -132,7 +142,7 @@ onUnmounted(() => {
               class="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-11 pr-10 text-white text-xs placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
               @input="onSearchInput"
               @focus="searchOpen = true"
-              @keyup.enter="searchQuery.trim() && router.push(`/oferta-academica?q=${encodeURIComponent(searchQuery.trim())}`)"
+              @keyup.enter="if (searchQuery.trim()) { router.push(`/oferta-academica?q=${encodeURIComponent(searchQuery.trim())}`); searchQuery = ''; searchOpen = false }"
               autocomplete="off"
             >
             <!-- Botón X para limpiar -->
@@ -195,24 +205,24 @@ onUnmounted(() => {
               <div class="py-12 px-10 grid grid-cols-[170px_1fr_1fr_1fr] gap-10">
                 <NuxtLink to="/admisiones" class="text-2xl font-futura-bold text-dark">Admisiones</NuxtLink>
                 <div>
-                  <NuxtLink to="/admisiones" class="font-futura-bold text-dark mb-4 text-lg">Pregrado</NuxtLink>
+                  <a href="/admisiones#pasos" class="font-futura-bold text-dark mb-4 text-lg block">Pregrado</a>
                   <ul class="space-y-3 text-base text-dark/70 pt-3">
-                    <li><NuxtLink to="/admisiones#pasos" class="hover:text-primary transition-colors">Pasos de Solicitud de Admisión</NuxtLink></li>
-                    <li><NuxtLink to="/admisiones#nuevo-ingreso" class="hover:text-primary transition-colors">Nuevo Ingreso</NuxtLink></li>
-                    <li><NuxtLink to="/admisiones#equivalencias" class="hover:text-primary transition-colors">Ingreso por Equivalencias</NuxtLink></li>
+                    <li><a href="/admisiones#pasos" class="hover:text-primary transition-colors">Pasos de Solicitud de Admisión</a></li>
+                    <li><a href="/admisiones#nuevo-ingreso" class="hover:text-primary transition-colors">Nuevo Ingreso</a></li>
+                    <li><a href="/admisiones#equivalencias" class="hover:text-primary transition-colors">Ingreso por Equivalencias</a></li>
                   </ul>
                 </div>
                 <div>
-                  <NuxtLink to="/admisiones#doble-titulacion" class="font-futura-bold text-dark mb-4 text-lg">Doble Titulación</NuxtLink>
+                  <a href="/admisiones#doble-titulacion" class="font-futura-bold text-dark mb-4 text-lg block">Doble Titulación</a>
                   <ul class="space-y-3 text-base text-dark/70 pt-3">
-                    <li><NuxtLink to="/admisiones#doble-titulacion" class="hover:text-primary transition-colors">Programas de Doble Titulación</NuxtLink></li>
-                    <li><NuxtLink to="/admisiones#costos" class="hover:text-primary transition-colors">Costos del Programa</NuxtLink></li>
+                    <li><a href="/admisiones#doble-titulacion" class="hover:text-primary transition-colors">Programas de Doble Titulación</a></li>
+                    <li><a href="/admisiones#costos" class="hover:text-primary transition-colors">Costos del Programa</a></li>
                   </ul>
                 </div>
                 <div>
-                  <NuxtLink to="/admisiones#postgrado" class="font-futura-bold text-dark mb-4 text-lg">Postgrado</NuxtLink>
+                  <a href="/admisiones#postgrado" class="font-futura-bold text-dark mb-4 text-lg block">Postgrado</a>
                   <ul class="space-y-3 text-base text-dark/70 pt-3">
-                    <li><NuxtLink to="/admisiones#postgrado" class="hover:text-primary transition-colors">Requisitos de Admisión</NuxtLink></li>
+                    <li><a href="/admisiones#postgrado" class="hover:text-primary transition-colors">Requisitos de Admisión</a></li>
                   </ul>
                 </div>
               </div>
@@ -259,11 +269,102 @@ onUnmounted(() => {
             <span>{{ nombreBtn }}</span>
             <div class="btn-circle"></div>
           </a>
-          <button class="xl:hidden">
+          <button @click="toggleMobileMenu" class="xl:hidden">
             <img src="/img/globals/hamburguer.svg" class="w-8" alt="Menu">
           </button>
         </div>
       </div>
     </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <Transition
+      enter-active-class="transition-opacity duration-500 ease-out"
+      leave-active-class="transition-opacity duration-500 ease-in"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div 
+        v-if="mobileMenuOpen"
+        @click="mobileMenuOpen = false"
+        class="fixed inset-0 bg-dark/40 z-[200] xl:hidden"
+      >
+        <Transition
+          enter-active-class="transition-transform duration-500 ease-out"
+          leave-active-class="transition-transform duration-500 ease-in"
+          enter-from-class="translate-x-10"
+          enter-to-class="translate-x-0"
+          leave-from-class="translate-x-0"
+          leave-to-class="translate-x-10"
+        >
+          <div 
+            v-if="mobileMenuOpen"
+            @click.stop
+            class="absolute right-0 top-0 w-[85%] h-full bg-[#F5F5F5] shadow-2xl flex flex-col"
+          >
+        <!-- Botón cerrar -->
+        <div class="flex justify-end p-6">
+          <button @click="mobileMenuOpen = false" class="text-dark hover:text-primary transition-colors">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navegación -->
+        <div class="px-8 pb-10 space-y-8 overflow-y-auto">
+          <div>
+            <NuxtLink to="/oferta-academica" @click="mobileMenuOpen = false" class="text-2xl font-futura-bold text-dark mb-2 block">Oferta Académica</NuxtLink>
+            <NuxtLink to="/oferta-academica" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary block pt-2">Carreras</NuxtLink>
+          </div>
+
+          <div>
+            <NuxtLink to="/admisiones" @click="mobileMenuOpen = false" class="text-2xl font-futura-bold text-dark mb-4 block">Admisiones</NuxtLink>
+            <ul class="space-y-4 pt-2">
+              <li><a href="/admisiones#pasos" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Pregrado</a></li>
+              <li><a href="/admisiones#doble-titulacion" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Programas Doble Titulación</a></li>
+              <li><a href="/admisiones#postgrado" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Posgrados</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <span class="text-2xl font-futura-bold text-dark mb-4 block">Experiencia Estudiantil</span>
+            <ul class="space-y-4 pt-2">
+              <li><NuxtLink to="/vida-estudiantil" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Vida Estudiantil</NuxtLink></li>
+              <li><NuxtLink to="/smart-u" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Smart U</NuxtLink></li>
+              <li><NuxtLink to="/conexion-u" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary">Conexión U</NuxtLink></li>
+            </ul>
+          </div>
+
+          <div>
+            <NuxtLink to="/powered-by-asu" @click="mobileMenuOpen = false" class="text-2xl font-futura-bold text-dark mb-2 block">Powered by ASU</NuxtLink>
+            <NuxtLink to="/powered-by-asu" @click="mobileMenuOpen = false" class="text-lg text-dark/80 hover:text-primary block pt-2">Beneficios de Alianza</NuxtLink>
+          </div>
+        </div>
+
+        <!-- Footer con servicios -->
+        <div class="grid grid-cols-4 gap-2 bg-white p-6 border-t border-dark/5 shrink-0">
+          <a :href="linkTramites" target="_blank" rel="noopener" class="flex flex-col items-center gap-2">
+            <img src="/img/globals/tramites.svg" class="w-7 h-7 invert" alt="Trámites">
+            <span class="text-[11px] text-dark font-futura-bold text-center leading-[1.1]">Trámites</span>
+          </a>
+          <a :href="linkWebDesktop" target="_blank" rel="noopener" class="flex flex-col items-center gap-2">
+            <img src="/img/globals/web-desktop.svg" class="w-7 h-7 invert" alt="Web">
+            <span class="text-[11px] text-dark font-futura-bold text-center leading-[1.1]">Web Desktop</span>
+          </a>
+          <a :href="linkUVirtual" class="flex flex-col items-center gap-2">
+            <img src="/img/globals/u-virtual.svg" class="w-7 h-7 invert" alt="U Virtual">
+            <span class="text-[11px] text-dark font-futura-bold text-center leading-[1.1]">U Virtual</span>
+          </a>
+          <a :href="linkPortalEducativo" class="flex flex-col items-center gap-2">
+            <img src="/img/globals/portal-del-estudiante.svg" class="w-7 h-7 invert" alt="Portal">
+            <span class="text-[11px] text-dark font-futura-bold text-center leading-[1.1]">Portal del Estudiante</span>
+          </a>
+        </div>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
   </header>
 </template>

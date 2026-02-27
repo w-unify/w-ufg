@@ -122,36 +122,49 @@ useHead({
       </section>
 
       <!-- Pasos de Solicitud de Admisión -->
-      <AdmisionesPasosAdmision
-        v-if="data?.pasos?.length"
-        :pasos="data.pasos"
-      />
+      <section id="pasos">
+        <AdmisionesPasosAdmision
+          v-if="data?.pasos?.length"
+          :pasos="data.pasos"
+        />
+      </section>
 
       <!-- Requisitos de Admisión de Pregrado -->
-      <AdmisionesRequisitosPregrado
-        v-if="data?.tabs?.length"
-        :tabs="data.tabs"
-      />
+      <section id="nuevo-ingreso">
+        <AdmisionesRequisitosPregrado
+          v-if="data?.tabs?.length"
+          :tabs="data.tabs"
+        />
+      </section>
 
       <!-- Prueba de Orientación Vocacional -->
-      <AdmisionesPruebaVocacional
-        v-if="data?.pov"
-        :titulo="data.pov.titulo"
-        :subtitulo="data.pov.subtitulo"
-        :descripcion="data.pov.descripcion"
-        :areas="data.pov.areas"
-        :pasos="data.pov.pasos"
-        :botones="data.pov.botones"
-      />
+      <section id="equivalencias">
+        <AdmisionesPruebaVocacional
+          v-if="data?.pov"
+          :titulo="data.pov.titulo"
+          :subtitulo="data.pov.subtitulo"
+          :descripcion="data.pov.descripcion"
+          :areas="data.pov.areas"
+          :pasos="data.pov.pasos"
+          :botones="data.pov.botones"
+        />
+      </section>
 
       <!-- Doble Titulación (video + requisitos + costos) -->
-      <AdmisionesDobleTitulacion
-        v-if="data?.costo"
-        :costos="data.costo.filas"
-        :total-label="data.costo.totalLabel"
-        :total-monto="data.costo.totalMonto"
-        :notas="data.costo.notas"
-      />
+      <section id="doble-titulacion">
+        <AdmisionesDobleTitulacion
+          v-if="data?.costo"
+          :costos="data.costo.filas"
+          :total-label="data.costo.totalLabel"
+          :total-monto="data.costo.totalMonto"
+          :notas="data.costo.notas"
+        />
+      </section>
+
+      <!-- Costos del Programa -->
+      <section id="costos">
+        <!-- Los costos están dentro de DobleTitulacion, este ancla apunta a la misma sección -->
+      </section>
 
       <!-- Beneficios UFG+ASU -->
       <AdmisionesBeneficiosASU
@@ -162,10 +175,12 @@ useHead({
       />
 
       <!-- Requisitos de Admisión de Postgrado -->
-      <AdmisionesRequisitosPostgrado
-        v-if="data?.postgradoTabs?.length"
-        :pasos="data.postgradoTabs[0]?.pasos"
-      />
+      <section id="postgrado">
+        <AdmisionesRequisitosPostgrado
+          v-if="data?.postgradoTabs?.length"
+          :pasos="data.postgradoTabs[0]?.pasos"
+        />
+      </section>
     </template>
   </div>
 </template>

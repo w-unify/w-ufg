@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import type { HeaderData, CareerData } from '~/types/squidex'
 import { useSquidexContent, resolveSquidexField } from '~/composables/useSquidexContent'
 
@@ -73,12 +73,16 @@ const handleClickOutsideSearch = (e: MouseEvent) => {
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
-  if (mobileMenuOpen.value) {
+}
+
+// Watch para manejar el scroll del body cuando el menú cambia
+watch(mobileMenuOpen, (isOpen) => {
+  if (isOpen) {
     document.body.style.overflow = 'hidden'
   } else {
     document.body.style.overflow = ''
   }
-}
+})
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)

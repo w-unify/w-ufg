@@ -6,9 +6,16 @@ interface Props {
   modalidad?: string
   esASU?: boolean
   imagen?: string
+  ciclos?: string[]
 }
 
 const props = defineProps<Props>()
+
+// Formatear texto de ciclos: "Ciclo 01 (Enero)" o "Ciclo 01 / Ciclo 02 (Junio)"
+const ciclosText = computed(() => {
+  if (!props.ciclos || props.ciclos.length === 0) return ''
+  return props.ciclos.join(' / ')
+})
 </script>
 
 <template>
@@ -41,8 +48,8 @@ const props = defineProps<Props>()
       <h3 class="font-futura-bold text-dark text-lg xl:text-2xl leading-[1.1]">
         <NuxtLink :to="`/carreras/${slug}`">{{ nombre }}</NuxtLink>
       </h3>
-      <p v-if="descripcionCorta" class="font-futura text-dark text-xs xl:text-sm mt-1 opacity-70">
-        {{ descripcionCorta }}
+      <p v-if="ciclosText" class="font-futura text-dark text-xs xl:text-sm mt-1 opacity-70">
+        {{ ciclosText }}
       </p>
     </div>
     <!-- Boton -->

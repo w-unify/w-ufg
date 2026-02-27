@@ -169,6 +169,12 @@ export interface TipoTitulacionData extends SquidexData {
   tipoTitulacionNombre: SquidexLanguageField<string>
 }
 
+// --- CICLOS ---
+export interface CicloData extends SquidexData {
+  nombre: SquidexLanguageField<string>
+  mesInicio: SquidexLanguageField<string>
+}
+
 // --- CARRERAS ---
 export interface MateriaData extends SquidexData {
   nombre: SquidexLanguageField<string>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import type { CareerData, ModalidadData, FacultadData, TipoTitulacionData } from '~/types/squidex'
+import type { CareerData, ModalidadData, FacultadData, TipoTitulacionData, CicloData } from '~/types/squidex'
 import { useSquidexContent, resolveSquidexField } from '~/composables/useSquidexContent'
 import { useSquidexAsset } from '~/composables/useSquidexAsset'
 
@@ -15,7 +15,7 @@ const searchOpen = ref(false)
 const searchRef = ref<HTMLElement | null>(null)
 const selectedModalidades = ref<string[]>([])
 const selectedFacultades = ref<string[]>([])
-const selectedCiclo = ref('')
+const selectedCiclos = ref<string[]>([])
 const selectedTitulaciones = ref<string[]>([])
 
 // Cargar opciones de filtros
@@ -26,6 +26,7 @@ const selectedTitulaciones = ref<string[]>([])
 const { content: modalidadesContent } = useSquidexContent<ModalidadData>('modalidades')
 const { content: facultadesContent } = useSquidexContent<FacultadData>('facultades')
 const { content: titulacionesContent } = useSquidexContent<TipoTitulacionData>('tipos-titulacion')
+const { content: ciclosContent } = useSquidexContent<CicloData>('ciclos')
 
 // Cargar todas las carreras sin filtros iniciales
 const { content: carrerasContent } = useSquidexContent<CareerData>('carreras', { $top: 100 })
@@ -41,11 +42,25 @@ const modalidades = computed(() => {
 })
 
 const facultades = computed(() => {
-  if (!facultadesContent.value) return []
-  return facultadesContent.value.map(f => ({
-    id: f.id,
-    nombre: resolveSquidexField<string>(f.data.facultadNombre, 'es') || ''
-  }))
+  if (!facultadesContent.value || !carrerasContent.value) return []
+  
+  // Obtener IDs de facultades que tienen carreras asignadas
+  const facultadesConCarreras = new Set<string>()
+  carrerasContent.value.forEach(c => {
+    const facultadRef = resolveSquidexField<string[]>(c.data['facultad-ref'], 'es')
+    const facultadId = facultadRef?.[0]
+    if (facultadId) {
+      facultadesConCarreras.add(facultadId)
+    }
+  })
+  
+  // Filtrar solo facultades que tienen carreras
+  return facultadesContent.value
+    .filter(f => facultadesConCarreras.has(f.id))
+    .map(f => ({
+      id: f.id,
+      nombre: resolveSquidexField<string>(f.data.facultadNombre, 'es') || ''
+    }))
 })
 
 const titulaciones = computed(() => {
@@ -56,11 +71,30 @@ const titulaciones = computed(() => {
   }))
 })
 
+const ciclos = computed(() => {
+  if (!ciclosContent.value) return []
+  return ciclosContent.value
+    .map(c => {
+      const nombre = resolveSquidexField<string>(c.data.nombre, 'es') || ''
+      const mesInicio = resolveSquidexField<string>(c.data.mesInicio, 'es') || ''
+      return {
+        id: c.id,
+        nombre: nombre,
+        mesInicio: mesInicio,
+        nombreCompleto: mesInicio ? `${nombre} (${mesInicio})` : nombre
+      }
+    })
+    .sort((a, b) => {
+      // Ordenar por nombre: Ciclo 01 primero, luego Ciclo 02
+      return a.nombre.localeCompare(b.nombre)
+    })
+})
+
 // Procesar carreras con filtros aplicados
 const { firstAssetUrl } = useSquidexAsset()
 
 const carreras = computed(() => {
-  if (!carrerasContent.value) return []
+  if (!carrerasContent.value || !ciclosContent.value) return []
   
   let filtered = carrerasContent.value.map(c => {
     const modalidadRef = resolveSquidexField<string[]>(c.data['modalidad-ref'], 'es')
@@ -73,6 +107,8 @@ const carreras = computed(() => {
     
     const titulacionRef = resolveSquidexField<string[]>(c.data['tiposTitulacion-ref'], 'es')
     const titulacionId = titulacionRef?.[0]
+    
+    const cicloDeIngresoRefs = resolveSquidexField<string[]>(c.data['cicloDeIngreso'], 'es') || []
     
     // Obtener imagen de que-vas-aprender-img
     const imagenIds = resolveSquidexField<string[]>(c.data['que-vas-aprender-img'], 'es')
@@ -93,6 +129,14 @@ const carreras = computed(() => {
       modalidadId,
       facultadId,
       titulacionId,
+      cicloDeIngresoIds: cicloDeIngresoRefs,
+      ciclosNombres: cicloDeIngresoRefs.map(cicloId => {
+        const ciclo = ciclosContent.value?.find(c => c.id === cicloId)
+        if (!ciclo) return ''
+        const nombre = resolveSquidexField<string>(ciclo.data.nombre, 'es') || ''
+        const mesInicio = resolveSquidexField<string>(ciclo.data.mesInicio, 'es') || ''
+        return mesInicio ? `${nombre} (${mesInicio})` : nombre
+      }).filter(n => n).sort(),
       esASU: resolveSquidexField<boolean>(c.data.esASU, 'es') || false,
       duracion: resolveSquidexField<string>(c.data.duracion, 'es') || '',
       imagen: imagenUrl
@@ -112,6 +156,13 @@ const carreras = computed(() => {
   // Filtrar por titulación
   if (selectedTitulaciones.value.length > 0) {
     filtered = filtered.filter(c => c.titulacionId && selectedTitulaciones.value.includes(c.titulacionId))
+  }
+  
+  // Filtrar por ciclo de ingreso
+  if (selectedCiclos.value.length > 0) {
+    filtered = filtered.filter(c => 
+      c.cicloDeIngresoIds && c.cicloDeIngresoIds.some(cicloId => selectedCiclos.value.includes(cicloId))
+    )
   }
   
   // Filtrar por búsqueda de texto
@@ -154,10 +205,19 @@ const toggleTitulacion = (id: string) => {
   }
 }
 
+const toggleCiclo = (id: string) => {
+  const index = selectedCiclos.value.indexOf(id)
+  if (index > -1) {
+    selectedCiclos.value.splice(index, 1)
+  } else {
+    selectedCiclos.value.push(id)
+  }
+}
+
 const clearAllFilters = () => {
   selectedModalidades.value = []
   selectedFacultades.value = []
-  selectedCiclo.value = ''
+  selectedCiclos.value = []
   selectedTitulaciones.value = []
   searchQuery.value = ''
 }
@@ -280,11 +340,7 @@ onUnmounted(() => {
 })
 
 
-// Opciones de ciclo (estáticas)
-const ciclosOptions = [
-  { id: '01', nombre: 'Ciclo 01' },
-  { id: '02', nombre: 'Ciclo 02' }
-]
+// Ciclos se cargan dinámicamente desde Squidex (ver computed ciclos)
 
 useHead({
   title: 'Oferta Académica - UFG',
@@ -417,9 +473,9 @@ useHead({
                 data-dropdown-teleport
                 class="bg-white border border-dark/10 rounded-xl shadow-xl py-2 max-h-[300px] overflow-y-auto"
               >
-                <label v-for="ciclo in ciclosOptions" :key="ciclo.id" class="filter-option">
-                  <input type="radio" name="ciclo" :checked="selectedCiclo === ciclo.id" @change="selectedCiclo = ciclo.id" class="filter-checkbox">
-                  <span class="ml-3">{{ ciclo.nombre }}</span>
+                <label v-for="ciclo in ciclos" :key="ciclo.id" class="filter-option">
+                  <input type="checkbox" :checked="selectedCiclos.includes(ciclo.id)" @change="toggleCiclo(ciclo.id)" class="filter-checkbox">
+                  <span class="ml-3">{{ ciclo.nombreCompleto }}</span>
                 </label>
               </div>
             </Teleport>
@@ -520,6 +576,7 @@ useHead({
             :modalidad="carrera.modalidad"
             :es-a-s-u="carrera.esASU"
             :imagen="carrera.imagen"
+            :ciclos="carrera.ciclosNombres"
           />
         </div>
       </div>

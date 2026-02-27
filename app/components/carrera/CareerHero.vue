@@ -56,7 +56,7 @@ withDefaults(defineProps<Props>(), {
                   <img src="/img/carreras/duracion.svg" alt="Reloj" class="w-5 h-5 xl:w-6 xl:h-6">
                   <span class="text-[13px] xl:text-lg whitespace-nowrap">{{ duration }}</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div v-if="degree" class="flex items-center gap-2">
                   <img src="/img/carreras/titulo.svg" alt="Título" class="w-5 h-5 xl:w-6 xl:h-6">
                   <span class="text-[13px] xl:text-lg whitespace-nowrap">{{ degree }}</span>
                 </div>

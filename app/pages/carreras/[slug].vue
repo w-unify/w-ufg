@@ -24,7 +24,7 @@ const detalle = computed(() => data.value?.detalle?.data ?? null)
 // --- Hero ---
 const heroTitle = computed(() => resolveSquidexField<string>(carrera.value?.nombre, 'es') || '')
 const heroDescription = computed(() => resolveSquidexField<string>(carrera.value?.['de-que-trata'], 'es') || '')
-const heroImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(carrera.value?.['que-vas-aprender-img'], 'es')))
+const heroImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(carrera.value?.ImagenPrincipalCarrera, 'es')))
 const heroModality = computed(() => data.value?.modalidadNombre || '')
 const heroDuration = computed(() => resolveSquidexField<string>(carrera.value?.duracion, 'es') || '')
 const heroEsASU = computed(() => resolveSquidexField<boolean>(carrera.value?.esASU, 'iv') ?? false)

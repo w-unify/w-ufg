@@ -1,7 +1,7 @@
 import { fetchSquidexContentBySlug, fetchSquidexContent, fetchSquidexContentById } from '../../utils/squidex'
 import type { CareerData, DetalleCarreraData, ModalidadData, MateriaData, PensumCiclo, PensumCicloResolved } from '~/types/squidex'
 
-export default defineEventHandler(async (event) => {
+export default defineCachedEventHandler(async (event) => {
   const query = getQuery(event)
   const slug = query.slug as string
 
@@ -45,81 +45,62 @@ export default defineEventHandler(async (event) => {
     
     console.log(`[detalle-carrera] Carrera encontrada: ${carrera.id}`)
 
-    // 2. Resolver nombre de modalidad
-    let modalidadNombre = ''
-    try {
-      const modalidadIds: string[] = carrera.data?.['modalidad-ref']?.iv || carrera.data?.['modalidad-ref']?.es || []
-      if (modalidadIds.length > 0) {
-        const modalidad = await fetchSquidexContentById<ModalidadData>('modalidades', modalidadIds[0]!)
-        modalidadNombre = modalidad?.data?.modalidadNombre?.iv || modalidad?.data?.modalidadNombre?.es || ''
-      }
-    } catch {
-      // continuar sin nombre de modalidad
-    }
+    // 2-3. Paralelizar: modalidad, detalles y TODAS las materias de una vez
+    const [modalidadResult, detallesResult, todasMaterias] = await Promise.all([
+      // Modalidad
+      (async () => {
+        try {
+          const modalidadIds: string[] = carrera.data?.['modalidad-ref']?.iv || carrera.data?.['modalidad-ref']?.es || []
+          if (modalidadIds.length > 0) {
+            const modalidad = await fetchSquidexContentById<ModalidadData>('modalidades', modalidadIds[0]!)
+            return modalidad?.data?.modalidadNombre?.iv || modalidad?.data?.modalidadNombre?.es || ''
+          }
+        } catch {}
+        return ''
+      })(),
+      // Detalles
+      (async () => {
+        try {
+          const detalles = await fetchSquidexContent<DetalleCarreraData>('detalles-carrera', { $top: 100 })
+          return detalles.items.find(item => {
+            const refs: string[] = item.data?.['carreras-ref']?.iv || item.data?.['carreras-ref']?.es || []
+            return refs.includes(carrera!.id)
+          }) || null
+        } catch {}
+        return null
+      })(),
+      // TODAS las materias de una vez (más eficiente que 100+ llamadas individuales)
+      (async () => {
+        try {
+          return await fetchSquidexContent<MateriaData>('materias', { $top: 500 })
+        } catch {
+          return { items: [], total: 0 }
+        }
+      })()
+    ])
 
-    // 3. Buscar el detalle-carrera que referencia esta carrera por su ID
-    // Squidex no soporta contains/eq en arrays de referencias, traemos todos y filtramos en memoria
-    let detalle = null
-    try {
-      const detalles = await fetchSquidexContent<DetalleCarreraData>('detalles-carrera', { $top: 100 })
-      detalle = detalles.items.find(item => {
-        const refs: string[] = item.data?.['carreras-ref']?.iv || item.data?.['carreras-ref']?.es || []
-        return refs.includes(carrera!.id)
-      }) || null
-      console.log(`[detalle-carrera] detalle encontrado: ${detalle ? detalle.id : 'ninguno'}`)
-    } catch {
-      // Si falla, continuar sin detalle
-    }
+    const modalidadNombre = modalidadResult
+    const detalle = detallesResult
 
-    // 4. Resolver pensum: cada MateriasDelCiclo contiene UUIDs de referencias al schema "materias"
+    // 4. Resolver pensum usando el Map de TODAS las materias (O(1) lookup)
     let pensumResuelto: PensumCicloResolved[] = []
     try {
       const pensumRaw: PensumCiclo[] = carrera.data?.pensum?.iv || carrera.data?.pensum?.es || []
       if (pensumRaw.length > 0) {
-        // Recolectar todos los IDs únicos de materias
-        const todosIds = [...new Set(pensumRaw.flatMap(c => c.MateriasDelCiclo || []))]
-        console.log(`[detalle-carrera] Resolviendo ${todosIds.length} materias únicas`)
-
-        // Resolver todas las materias en paralelo con límite de concurrencia
+        // Crear Map de materias para lookup O(1)
         const materiasMap = new Map<string, { nombre: string; esASU: boolean }>()
-        
-        // Procesar en lotes de 10 para evitar sobrecarga
-        const batchSize = 10
-        for (let i = 0; i < todosIds.length; i += batchSize) {
-          const batch = todosIds.slice(i, i + batchSize)
-          await Promise.all(
-            batch.map(async (id) => {
-              try {
-                const materia = await fetchSquidexContentById<MateriaData>('materias', id)
-                if (materia) {
-                  const nombre = materia.data?.nombre?.iv || materia.data?.nombre?.es || ''
-                  const esASU = materia.data?.esASU?.iv ?? materia.data?.esASU?.es ?? false
-                  materiasMap.set(id, { nombre, esASU })
-                }
-              } catch (err) {
-                console.error(`[detalle-carrera] Error resolviendo materia ${id}:`, err)
-              }
-            })
-          )
-        }
-        console.log(`[detalle-carrera] Materias resueltas: ${materiasMap.size}/${todosIds.length}`)
+        todasMaterias.items.forEach(materia => {
+          const nombre = materia.data?.nombre?.iv || materia.data?.nombre?.es || ''
+          const esASU = materia.data?.esASU?.iv ?? materia.data?.esASU?.es ?? false
+          materiasMap.set(materia.id, { nombre, esASU })
+        })
 
-        // Log raw del primer ciclo para ver estructura de esASU
-        console.log(`[detalle-carrera] pensumRaw[0] raw:`, JSON.stringify(pensumRaw[0]))
-        if (pensumRaw.length > 2) console.log(`[detalle-carrera] pensumRaw[2] raw:`, JSON.stringify(pensumRaw[2]))
-
-        // Construir pensum resuelto
+        // Construir pensum resuelto (instantáneo con Map)
         pensumResuelto = pensumRaw.map(ciclo => ({
           nombreCiclo: ciclo.nombreCiclo,
           esASU: (ciclo.esASU as any) === true || (ciclo.esASU as any) === 'true' || (ciclo.esASU as any)?.iv === true || false,
           materias: (ciclo.MateriasDelCiclo || []).map((id: string) => materiasMap.get(id) ?? { nombre: id, esASU: false })
         }))
-
-        // DEBUG: log pensum resuelto
-        console.log(`[detalle-carrera] pensumResuelto ciclos: ${pensumResuelto.length}`)
-        pensumResuelto.forEach(ciclo => {
-          console.log(`[detalle-carrera] Ciclo "${ciclo.nombreCiclo}" esASU=${ciclo.esASU} materias:`, JSON.stringify(ciclo.materias))
-        })
       }
     } catch {
       // continuar sin pensum resuelto
@@ -132,14 +113,17 @@ export default defineEventHandler(async (event) => {
       pensumResuelto
     }
   } catch (error: any) {
-    console.error(`[detalle-carrera] Error:`, error)
     if (error.statusCode === 404) throw error
-    
-    // Exponer mensaje real en desarrollo
-    const isDev = process.env.NODE_ENV === 'development'
     throw createError({ 
       statusCode: 500, 
-      message: isDev ? `Error al obtener detalle de carrera: ${error.message}` : 'Error al obtener detalle de carrera'
+      message: `Error al obtener detalle de carrera: ${error.message || 'Unknown error'}`
     })
+  }
+}, {
+  maxAge: 60 * 60, // Cache por 1 hora (3600 segundos)
+  swr: true,       // Stale-While-Revalidate: sirve cache mientras regenera en background
+  getKey: (event) => {
+    const query = getQuery(event)
+    return `detalle-carrera:${query.slug}` // Key única por carrera
   }
 })

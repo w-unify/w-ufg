@@ -12,31 +12,15 @@ export default defineCachedEventHandler(async (event) => {
   try {
     console.log(`[detalle-carrera] Buscando slug: "${slug}"`)
 
-    // Buscar carrera usando filtro OData para mejor performance
+    // Buscar carrera por slug normalizado (sin tildes)
     const slugNorm = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    
-    // Intentar búsqueda directa primero (más rápido)
-    let carrera = null
-    try {
-      const result = await fetchSquidexContent<CareerData>('carreras', { 
-        $filter: `data/slug/iv eq '${slug}' or data/slug/es eq '${slug}' or data/slug/en eq '${slug}'`,
-        $top: 1
-      })
-      carrera = result.items[0] || null
-    } catch (e) {
-      console.log(`[detalle-carrera] Búsqueda directa falló, intentando normalizada`)
-    }
-
-    // Si no encontró, buscar todas y normalizar (fallback)
-    if (!carrera) {
-      const todas = await fetchSquidexContent<CareerData>('carreras', { $top: 200 })
-      carrera = todas.items.find(item => {
-        const s = item.data?.slug
-        const val = s?.iv || s?.es || s?.en || ''
-        const valNorm = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-        return valNorm === slugNorm
-      }) || null
-    }
+    const todas = await fetchSquidexContent<CareerData>('carreras', { $top: 200 })
+    const carrera = todas.items.find(item => {
+      const s = item.data?.slug
+      const val = s?.iv || s?.es || s?.en || ''
+      const valNorm = val.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+      return valNorm === slugNorm
+    }) || null
 
     if (!carrera) {
       console.log(`[detalle-carrera] No encontrada con slug "${slug}"`)

@@ -1,7 +1,8 @@
 import { fetchSquidexContentBySlug, fetchSquidexContent, fetchSquidexContentById } from '../../utils/squidex'
 import type { CareerData, DetalleCarreraData, ModalidadData, MateriaData, PensumCiclo, PensumCicloResolved } from '~/types/squidex'
 
-export default defineCachedEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
+// export default defineCachedEventHandler(async (event) => {
   const query = getQuery(event)
   const slug = query.slug as string
 
@@ -103,11 +104,11 @@ export default defineCachedEventHandler(async (event) => {
       message: `Error al obtener detalle de carrera: ${error.message || 'Unknown error'}`
     })
   }
-}, {
-  maxAge: 60 * 60, // Cache por 1 hora (3600 segundos)
-  swr: true,       // Stale-While-Revalidate: sirve cache mientras regenera en background
-  getKey: (event) => {
-    const query = getQuery(event)
-    return `detalle-carrera:${query.slug}` // Key única por carrera
-  }
+// }, {
+//   maxAge: 60 * 60, // Cache por 1 hora (3600 segundos)
+//   swr: true,       // Stale-While-Revalidate: sirve cache mientras regenera en background
+//   getKey: (event) => {
+//     const query = getQuery(event)
+//     return `detalle-carrera:${query.slug}` // Key única por carrera
+//   }
 })

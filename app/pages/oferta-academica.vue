@@ -6,8 +6,13 @@ import { useSquidexAsset } from '~/composables/useSquidexAsset'
 
 useScrollAnimations()
 
+// Leer query param de la URL
+const route = useRoute()
+
 // Estado de filtros
 const searchQuery = ref('')
+const searchOpen = ref(false)
+const searchRef = ref<HTMLElement | null>(null)
 const selectedModalidades = ref<string[]>([])
 const selectedFacultades = ref<string[]>([])
 const selectedCiclo = ref('')
@@ -159,6 +164,23 @@ const clearAllFilters = () => {
 
 const clearSearch = () => {
   searchQuery.value = ''
+  searchOpen.value = false
+}
+
+const onSearchInput = () => {
+  searchOpen.value = true
+}
+
+const selectCarrera = (slug: string) => {
+  searchQuery.value = ''
+  searchOpen.value = false
+  navigateTo(`/carreras/${slug}`)
+}
+
+const handleClickOutsideSearch = (e: MouseEvent) => {
+  if (searchRef.value && !searchRef.value.contains(e.target as Node)) {
+    searchOpen.value = false
+  }
 }
 
 // Chips de filtros activos
@@ -242,8 +264,20 @@ const updateDropdownRect = (key: string, el: HTMLElement | null) => {
   }
 }
 
-onMounted(() => document.addEventListener('mousedown', handleClickOutside))
-onUnmounted(() => document.removeEventListener('mousedown', handleClickOutside))
+onMounted(() => {
+  // Inicializar búsqueda desde query param
+  const q = route.query.q as string
+  if (q) {
+    searchQuery.value = q
+  }
+  
+  document.addEventListener('mousedown', handleClickOutside)
+  document.addEventListener('click', handleClickOutsideSearch)
+})
+onUnmounted(() => {
+  document.removeEventListener('mousedown', handleClickOutside)
+  document.removeEventListener('click', handleClickOutsideSearch)
+})
 
 
 // Opciones de ciclo (estáticas)
@@ -271,7 +305,7 @@ useHead({
           <h1 class="heading-1 reveal">Oferta <br>académica</h1>
           
           <!-- Buscador -->
-          <div class="relative w-full xl:w-[450px]">
+          <div ref="searchRef" class="relative w-full xl:w-[450px]">
             <div class="relative flex items-center fade delay-400">
               <div class="absolute left-5 w-5 h-5 flex items-center justify-center pointer-events-none">
                 <img src="/img/carreras/search-line.svg" class="w-full h-full" alt="search">
@@ -281,7 +315,10 @@ useHead({
                 v-model="searchQuery"
                 type="text" 
                 placeholder="Buscar carrera..." 
-                class="w-full bg-primary/5 border border-primary rounded-xl py-2 pl-14 pr-6 text-dark text-sm placeholder:text-primary/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/10 transition-all"
+                class="w-full bg-primary/5 border border-primary rounded-xl py-2 pl-14 pr-14 text-dark text-sm placeholder:text-primary/50 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/10 transition-all"
+                @input="onSearchInput"
+                @focus="searchOpen = true"
+                autocomplete="off"
               >
               <!-- Boton clear -->
               <button 
@@ -293,6 +330,21 @@ useHead({
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
+              </button>
+            </div>
+            <!-- Dropdown resultados -->
+            <div 
+              v-if="searchOpen && searchQuery.trim().length >= 2 && carreras.length > 0"
+              class="absolute top-full left-0 w-full mt-1 bg-white rounded-xl shadow-xl overflow-hidden z-[200] border border-dark/10 max-h-[400px] overflow-y-auto"
+            >
+              <button
+                v-for="carrera in carreras.slice(0, 8)"
+                :key="carrera.slug"
+                @click="selectCarrera(carrera.slug)"
+                class="w-full text-left px-4 py-3 text-dark text-sm hover:bg-primary/5 hover:text-primary transition-colors border-b border-dark/5 last:border-0 flex items-center gap-3"
+              >
+                <img src="/img/carreras/search-line.svg" class="w-3.5 h-3.5 opacity-30 shrink-0" alt="">
+                <span>{{ carrera.nombre }}</span>
               </button>
             </div>
           </div>

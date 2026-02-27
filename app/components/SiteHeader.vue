@@ -129,11 +129,23 @@ onUnmounted(() => {
               v-model="searchQuery"
               type="text" 
               placeholder="Buscar carrera..." 
-              class="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-11 pr-4 text-white text-xs placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
+              class="w-full bg-white/10 border border-white/20 rounded-lg py-2 pl-11 pr-10 text-white text-xs placeholder:text-white/50 focus:outline-none focus:bg-white/20 transition-all"
               @input="onSearchInput"
               @focus="searchOpen = true"
+              @keyup.enter="searchQuery.trim() && router.push(`/oferta-academica?q=${encodeURIComponent(searchQuery.trim())}`)"
               autocomplete="off"
             >
+            <!-- Botón X para limpiar -->
+            <button 
+              v-if="searchQuery"
+              @click="searchQuery = ''; searchOpen = false"
+              class="absolute right-3 w-5 h-5 flex items-center justify-center text-white/50 hover:text-white transition-colors" 
+              title="Limpiar búsqueda"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
           </div>
           <!-- Dropdown resultados -->
           <div 

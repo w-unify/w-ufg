@@ -71,6 +71,8 @@ export default defineEventHandler(async (_event) => {
       dia: e.dia ?? '',
       mes: e.mes ?? '',
       modalidad: e.modalidad ?? '',
+      btnTexto: e.btnTexto ?? 'ASISTIR',
+      btnUrl: e.btnUrl ?? '',
     }))
 
     // Sección 3: Clubes

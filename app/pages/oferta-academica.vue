@@ -110,8 +110,8 @@ const carreras = computed(() => {
     
     const cicloDeIngresoRefs = resolveSquidexField<string[]>(c.data['cicloDeIngreso'], 'es') || []
     
-    // Obtener imagen principal de la carrera
-    const imagenIds = resolveSquidexField<string[]>(c.data['ImagenPrincipalCarrera'], 'es')
+    // Obtener imagen miniatura para oferta académica
+    const imagenIds = resolveSquidexField<string[]>(c.data['imgMiniaturaOfertaAcademica'], 'es')
     const imagenUrl = imagenIds && imagenIds.length > 0 ? firstAssetUrl(imagenIds) : ''
     
     const rawSlug = resolveSquidexField<string>(c.data.slug, 'iv')

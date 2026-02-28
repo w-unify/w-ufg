@@ -7,6 +7,8 @@ interface EventoItem {
   dia: string
   mes: string
   modalidad: string
+  btnTexto: string
+  btnUrl: string
 }
 
 interface Props {
@@ -104,8 +106,8 @@ const next = () => { current.value = Math.min(maxIndex.value, current.value + 1)
                         {{ item.mes }}
                       </span>
                     </div>
-                    <a href="#" class="btn-secondary group btn-sm xl:btn-nm w-full">
-                      <span>ASISTIR</span>
+                    <a :href="item.btnUrl || '#'" class="btn-secondary group btn-sm xl:btn-nm w-full" target="_blank" rel="noopener">
+                      <span>{{ item.btnTexto }}</span>
                       <div class="btn-circle"></div>
                     </a>
                   </div>

@@ -39,10 +39,11 @@ const discoverLearnText = computed(() => resolveSquidexField<string>(carrera.val
 const discoverLearnImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(carrera.value?.['que-vas-aprender-img'], 'es')))
 
 // --- ¿En qué vas a trabajar? ---
+const workData = computed(() => resolveSquidexField<any>(carrera.value?.['en-que-trabajar'], 'es'))
+const workTitle = computed(() => workData.value?.titulo || '¿En qué vas a trabajar?')
 const workPositions = computed(() => {
-  const raw = resolveSquidexField<any>(carrera.value?.['en-que-trabajar'], 'es')
-  if (!raw?.items) return []
-  return raw.items.map((item: any) => item.texto || '')
+  if (!workData.value?.items) return []
+  return workData.value.items.map((item: any) => item.texto || '')
 })
 
 // --- Doble titulación ---
@@ -148,6 +149,7 @@ useHead({
 
       <CarreraWorkPositions
         v-if="workPositions.length > 0"
+        :section-title="workTitle"
         :positions="workPositions"
       />
 

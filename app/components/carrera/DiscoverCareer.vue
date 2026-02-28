@@ -7,7 +7,10 @@ interface Props {
   learnImage?: string
 }
 
-const props = defineProps<Props>()
+withDefaults(defineProps<Props>(), {
+  title: 'Descubre tu carrera',
+  learnTitle: '¿Qué vas a aprender?'
+})
 
 const accordionItems = ref([false, false])
 

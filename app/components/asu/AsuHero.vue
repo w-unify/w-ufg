@@ -1,12 +1,14 @@
 <script setup lang="ts">
 interface Props {
   bannerImg?: string
+  bannerImgMobile?: string
   logoImg?: string
   miniBannerImg?: string
 }
 
 withDefaults(defineProps<Props>(), {
   bannerImg: '',
+  bannerImgMobile: '',
   logoImg: '',
   miniBannerImg: '',
 })
@@ -15,13 +17,21 @@ withDefaults(defineProps<Props>(), {
 <template>
   <section class="relative min-h-[350px] xl:min-h-[400px] pt-[30px] xl:pt-[40px] flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0 z-0">
+      <!-- Imagen desktop -->
       <img
         v-if="bannerImg"
         :src="bannerImg"
         alt="Fondo ASU"
-        class="w-full h-full object-cover"
+        class="hidden xl:block w-full h-full object-cover"
       >
-      <div v-else class="w-full h-full bg-primary"></div>
+      <!-- Imagen mobile -->
+      <img
+        v-if="bannerImgMobile"
+        :src="bannerImgMobile"
+        alt="Fondo ASU Mobile"
+        class="block xl:hidden w-full h-full object-cover"
+      >
+      <div v-if="!bannerImg && !bannerImgMobile" class="w-full h-full bg-primary"></div>
       <div class="absolute inset-0 bg-black/40"></div>
     </div>
 

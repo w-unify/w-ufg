@@ -3,6 +3,7 @@ interface HeroData {
   logoImg: string
   miniBannerImg: string
   bannerImg: string
+  bannerImgMobile: string
 }
 
 interface IntroData {
@@ -92,6 +93,7 @@ useHead({
       <!-- Sección 1: Hero -->
       <AsuHero
         :banner-img="data.hero.bannerImg"
+        :banner-img-mobile="data.hero.bannerImgMobile"
         :logo-img="data.hero.logoImg"
         :mini-banner-img="data.hero.miniBannerImg"
       />

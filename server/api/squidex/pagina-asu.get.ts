@@ -43,11 +43,13 @@ export default defineEventHandler(async (_event) => {
     const logoImgRaw = firstVal<string[]>(data?.['seccion1-logoImg'])
     const miniBannerRaw = firstVal<string[]>(data?.['seccion1-miniBannerImg'])
     const bannerImgRaw = firstVal<string[]>(data?.['seccion1-bannerImg'])
+    const bannerImgMobileRaw = firstVal<string[]>(data?.['seccion1-bannerImg-mobile'])
 
     const hero = {
       logoImg: assetUrl(logoImgRaw),
       miniBannerImg: assetUrl(miniBannerRaw),
       bannerImg: assetUrl(bannerImgRaw),
+      bannerImgMobile: assetUrl(bannerImgMobileRaw),
     }
 
     // ── Sección 2: Intro ──────────────────────────────────────────────────────
@@ -70,7 +72,22 @@ export default defineEventHandler(async (_event) => {
 
     // ── Sección 4: Video ──────────────────────────────────────────────────────
     const videoTitulo = firstVal<string>(data?.['seccion4-titulo']) ?? ''
-    const videoUrl = firstVal<string>(data?.['seccion4-videoUrl']) ?? 'https://www.youtube.com/embed/_L20QkHmTU8'
+    const videoUrlRaw = firstVal<string>(data?.['seccion4-videoUrl']) ?? 'https://www.youtube.com/embed/_L20QkHmTU8'
+    
+    // Convertir URL de YouTube a formato embed
+    function toYouTubeEmbed(url: string): string {
+      if (!url) return ''
+      // Si ya es embed, retornar tal cual
+      if (url.includes('/embed/')) return url
+      // Convertir watch?v= a embed/
+      const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/)
+      if (match?.[1]) {
+        return `https://www.youtube.com/embed/${match[1]}`
+      }
+      return url
+    }
+    
+    const videoUrl = toYouTubeEmbed(videoUrlRaw)
 
     // ── Sección 5: Competencias Slider ────────────────────────────────────────
     const competenciasRaw: any = firstVal(data?.['seccion5-competenciaSlider'])

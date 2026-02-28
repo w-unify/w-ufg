@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { FooterData } from '~/types/squidex'
+import type { FooterData, CtaFooterItem } from '~/types/squidex'
 import { useSquidexContent, resolveSquidexField } from '~/composables/useSquidexContent'
 
 // Cargar datos del footer desde Squidex
@@ -17,6 +17,14 @@ const linkFacebook = computed(() => resolveSquidexField<string>(footer.value?.li
 const linkX = computed(() => resolveSquidexField<string>(footer.value?.linkX, 'es') || '#')
 const linkLinkedin = computed(() => resolveSquidexField<string>(footer.value?.linkLinkedin, 'es') || '#')
 const linkYoutube = computed(() => resolveSquidexField<string>(footer.value?.linkYoutube, 'es') || '#')
+
+const ctaItems = computed(() => resolveSquidexField<CtaFooterItem[]>(footer.value?.ctaFooter, 'es') || [])
+const cta = computed(() => ctaItems.value?.[0] ?? null)
+const ctaFrase = computed(() => cta.value?.frase || '')
+const ctaCTA = computed(() => cta.value?.CTA || '')
+const ctaParrafo = computed(() => cta.value?.parrafo || '')
+const ctaTextoBtn = computed(() => cta.value?.textoBtn || 'APLICAR')
+const ctaUrl = computed(() => cta.value?.url || '/aplicar')
 </script>
 
 <template>
@@ -24,18 +32,15 @@ const linkYoutube = computed(() => resolveSquidexField<string>(footer.value?.lin
     <div class="container mx-auto max-w-[1400px] px-6">
 
       <!-- CTA -->
-      <div class="flex flex-col xl:flex-row items-center justify-between gap-8 mb-16 xl:mb-16">
+      <div v-if="cta" class="flex flex-col xl:flex-row items-center justify-between gap-8 mb-16 xl:mb-16">
         <div class="text-center xl:text-left">
           <h4 class="font-futura-bold text-[32px] xl:text-[45px] leading-[1.1] text-dark mb-4 fade">
-            Educación local con Impacto Global<br>
-            ¡Inscríbete!
+            {{ ctaFrase }}<br>{{ ctaCTA }}
           </h4>
-          <p class="text-dark/80 text-sm xl:text-base max-w-[550px] fade">
-            Tu futuro global comienza en la UFG, única universidad en El Salvador potenciada por Arizona State University.
-          </p>
+          <p class="text-dark/80 text-sm xl:text-base max-w-[550px] fade">{{ ctaParrafo }}</p>
         </div>
-        <NuxtLink to="/aplicar" class="btn-primary btn-lg group relative pulse">
-          <span>APLICAR</span>
+        <NuxtLink :to="ctaUrl" class="btn-primary btn-lg group relative pulse">
+          <span>{{ ctaTextoBtn }}</span>
           <div class="btn-circle"></div>
         </NuxtLink>
       </div>

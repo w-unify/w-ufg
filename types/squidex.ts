@@ -140,7 +140,16 @@ export interface HeaderData extends SquidexData {
 }
 
 // --- FOOTER DATA ---
+export interface CtaFooterItem {
+  frase: string
+  CTA: string
+  parrafo: string
+  textoBtn: string
+  url: string
+}
+
 export interface FooterData extends SquidexData {
+  ctaFooter: SquidexLanguageField<CtaFooterItem[]>
   nombreSede: SquidexLanguageField<string>
   direccionSede: SquidexLanguageField<string>
   telefonoSede: SquidexLanguageField<string>

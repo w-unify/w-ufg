@@ -48,7 +48,7 @@ const workPositions = computed(() => {
 // --- Doble titulación ---
 const ufgDegree = computed(() => resolveSquidexField<string>(carrera.value?.nombre, 'es') || '')
 const asuDegree = computed(() => resolveSquidexField<string>(carrera.value?.['doble-titulo-nombre'], 'es') || '')
-const dualImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(carrera.value?.['doble-titulacion-img'], 'es')))
+const dualImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(detalle.value?.logoDT, 'es')))
 
 // --- Pensum ---
 const pensumResuelto = computed(() => data.value?.pensumResuelto ?? [])
@@ -92,11 +92,11 @@ const becas = computed(() => {
 
 // --- Testimonios ---
 const testimonios = computed(() => {
-  const raw = resolveSquidexField<any[]>(detalle.value?.testimoniosEgresados, 'es') || []
+  const raw = resolveSquidexField<any[]>(carrera.value?.testimoniosEgresados, 'es') || []
   return raw.map((t: any) => ({
     linkVideo: t.linkVideo || '',
     nombreEgresado: t.nombreEgresado || '',
-    profesionEgresado: t.profesionEgresado || '',
+    profesionEgresado: t.profesion || '',
     fotoEgresado: firstAssetUrl(t.fotoEgresado) || ''
   }))
 })

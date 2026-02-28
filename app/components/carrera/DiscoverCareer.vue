@@ -7,13 +7,7 @@ interface Props {
   learnImage?: string
 }
 
-withDefaults(defineProps<Props>(), {
-  title: 'Descubre tu carrera',
-  aboutText: 'La carrera de Arquitectura te prepara para diseñar, planificar y supervisar proyectos arquitectónicos y urbanos con criterios técnicos, creativos y sostenibles que respondan a las necesidades actuales y futuras.',
-  learnTitle: '¿Qué vas a aprender?',
-  learnText: 'Domina el diseño arquitectónico, dibujo técnico y digital, urbanismo, normativa constructiva, planificación de proyectos, supervisión de obras y soluciones integrales para el entorno construido. Desarrollarás creatividad, criterio técnico y visión sostenible.',
-  learnImage: '/img/infocarreras/Que vas aprender_ - Arquitectura.webp'
-})
+const props = defineProps<Props>()
 
 const accordionItems = ref([false, false])
 
@@ -35,7 +29,10 @@ function toggleAccordion(index: number) {
           </div>
           <div class="bg-white rounded-big flex items-center gap-16">
             <div class="w-1/2">
-              <img :src="learnImage" :alt="learnTitle" class="w-full h-auto rounded-general object-cover">
+              <img v-if="learnImage" :src="learnImage" :alt="learnTitle" class="w-full h-auto rounded-general object-cover">
+              <div v-else class="w-full aspect-video rounded-general bg-muted flex items-center justify-center">
+                <p class="text-dark/50 text-center font-futura">Sin imagen asignada</p>
+              </div>
             </div>
             <div class="w-1/2 fade delay-200">
               <h3 class="font-futura-bold text-[32px] text-dark mb-6">{{ learnTitle }}</h3>
@@ -67,7 +64,10 @@ function toggleAccordion(index: number) {
             </button>
             <div class="overflow-hidden transition-all duration-500 bg-white" :class="accordionItems[1] ? 'max-h-[800px]' : 'max-h-0'">
               <div class="px-6 pb-8 text-center">
-                <img :src="learnImage" alt="Aprendizaje" class="w-full h-auto rounded-general mb-6">
+                <img v-if="learnImage" :src="learnImage" alt="Aprendizaje" class="w-full h-auto rounded-general mb-6">
+                <div v-else class="w-full aspect-video rounded-general bg-muted flex items-center justify-center mb-6">
+                  <p class="text-dark/50 text-center font-futura text-sm">Sin imagen asignada</p>
+                </div>
                 <p class="text-sm leading-relaxed text-dark text-left">{{ learnText }}</p>
               </div>
             </div>

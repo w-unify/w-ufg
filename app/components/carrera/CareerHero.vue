@@ -10,16 +10,7 @@ interface Props {
   asuLogoImage?: string
 }
 
-withDefaults(defineProps<Props>(), {
-  title: 'Ingeniería en Ciencia de Datos',
-  description: 'Diseñá espacios funcionales, sostenibles y visualmente poderosos. Formate como arquitecto con visión global, enfoque tecnológico y criterio estratégico para crear soluciones de alto impacto en diseño, construcción y desarrollo urbano.',
-  image: '/img/infocarreras/Banner - Arquitectura_.webp',
-  modality: 'Semipresencial',
-  asuEnriched: true,
-  duration: '4 años (3+1 ASU)',
-  degree: 'Doble titulación',
-  asuLogoImage: '/img/carreras/asu-circulo.webp'
-})
+const props = defineProps<Props>()
 </script>
 
 <template>
@@ -32,9 +23,12 @@ withDefaults(defineProps<Props>(), {
       </div>
 
       <div class="order-2 xl:order-none xl:col-start-2 xl:row-span-2 w-full reveal delay-200">
-        <div class="hero-img-mask">
+        <div v-if="image" class="hero-img-mask">
           <img :src="image" :alt="title" class="w-full h-full object-cover object-top">
           <div class="img-gradient-overlay"></div>
+        </div>
+        <div v-else class="hero-img-mask flex items-center justify-center bg-muted">
+          <p class="text-dark/50 text-center font-futura">Sin imagen asignada</p>
         </div>
       </div>
 

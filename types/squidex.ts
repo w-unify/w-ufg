@@ -230,8 +230,10 @@ export interface CareerData extends SquidexData {
   'modalidad-ref': SquidexLanguageField<string[]>
   'facultad-ref': SquidexLanguageField<string[]>
   'tiposTitulacion-ref': SquidexLanguageField<string[]>
+  cicloDeIngreso: SquidexLanguageField<string[]>
   esASU: SquidexLanguageField<boolean>
   duracion: SquidexLanguageField<string>
+  ImagenPrincipalCarrera: SquidexLanguageField<string[]>
   'de-que-trata': SquidexLanguageField<string>
   'que-vas-aprender': SquidexLanguageField<string>
   'que-vas-aprender-img': SquidexLanguageField<string[]>
@@ -242,6 +244,7 @@ export interface CareerData extends SquidexData {
   pensumBtnNombre: SquidexLanguageField<string>
   pensumBtnUrl: SquidexLanguageField<string>
   valorSemestre: SquidexLanguageField<ValorSemestreData>
+  testimoniosEgresados: SquidexLanguageField<TestimonioEgresado[]>
   degree: SquidexLanguageField<string>
   aboutText: SquidexLanguageField<string>
   learnTitle: SquidexLanguageField<string>
@@ -279,7 +282,7 @@ export interface BecaFinanciamientoData {
 export interface TestimonioEgresado {
   linkVideo: string
   nombreEgresado: string
-  profesionEgresado: string
+  profesion: string
   fotoEgresado: string[]
 }
 
@@ -287,6 +290,7 @@ export interface DetalleCarreraData extends SquidexData {
   'carreras-ref': SquidexLanguageField<string[]>
   becasFinanciamientos: SquidexLanguageField<BecaFinanciamientoData>
   testimoniosEgresados: SquidexLanguageField<TestimonioEgresado[]>
+  logoDT: SquidexLanguageField<string[]>
 }
 
 export type DetalleCarreraContent = SquidexContent<DetalleCarreraData>

@@ -43,11 +43,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <section class="pt-8 pb-16 xl:py-24 bg-white">
-    <div class="container mx-auto max-w-[1400px] px-6">
-      <h2 class="heading-2 text-primary mb-12 reveal">{{ sectionTitle }}</h2>
+  <section class="py-16 xl:py-24 bg-white overflow-hidden">
+    <div class="container mx-auto max-w-[1200px] px-6">
+      <h2 class="heading-2 text-primary text-center mb-8 xl:mb-16 reveal">{{ sectionTitle }}</h2>
 
-      <div class="relative px-12 xl:px-[60px] reveal delay-200">
+      <div class="flex items-center justify-center gap-[10px] xl:gap-[20px]">
+        <!-- Botón anterior -->
+        <button
+          class="shrink-0 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
+          :disabled="currentIndex === 0"
+          @click="prev"
+        >
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7L7 13" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
         <!-- Slides -->
         <div class="overflow-hidden w-full">
           <div
@@ -60,31 +69,31 @@ onMounted(() => {
               class="shrink-0"
               :style="{ width: `calc(${100 / slidesPerView}% - ${(slidesPerView - 1) * 30 / slidesPerView}px)` }"
             >
-              <div class="rounded-card overflow-hidden bg-dark">
+              <div class="bg-dark rounded-card overflow-hidden h-full flex flex-col reveal delay-200">
                 <!-- Video embed -->
-                <div class="relative aspect-video bg-black">
+                <div class="relative w-full aspect-video bg-black">
                   <iframe
                     v-if="item.linkVideo"
                     :src="getYoutubeEmbed(item.linkVideo)"
-                    class="w-full h-full"
+                    class="absolute top-0 left-0 w-full h-full"
                     frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowfullscreen
                   ></iframe>
                 </div>
                 <!-- Info egresado -->
-                <div class="flex items-center gap-3 p-4">
-                  <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-muted">
+                <div class="flex items-center gap-4 p-3 xl:p-4">
+                  <div class="w-14 h-14 xl:w-16 xl:h-16 shrink-0">
                     <img
                       v-if="item.fotoEgresado"
                       :src="item.fotoEgresado"
                       :alt="item.nombreEgresado"
-                      class="w-full h-full object-cover"
+                      class="w-full h-full object-cover rounded-full border-2 border-white"
                     >
                   </div>
                   <div>
-                    <p class="font-futura-bold text-white text-sm leading-tight">{{ item.nombreEgresado }}</p>
-                    <p class="font-futura text-white/70 text-xs">{{ item.profesionEgresado }}</p>
+                    <p class="text-white text-base xl:text-lg leading-tight">{{ item.nombreEgresado }}</p>
+                    <span class="text-xs xl:text-sm text-white/70 font-futura">{{ item.profesionEgresado }}</span>
                   </div>
                 </div>
               </div>
@@ -92,18 +101,9 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Botón anterior -->
-        <button
-          class="absolute -left-2 xl:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
-          :disabled="currentIndex === 0"
-          @click="prev"
-        >
-          <svg width="8" height="14" viewBox="0 0 8 14" fill="none"><path d="M7 1L1 7L7 13" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-
         <!-- Botón siguiente -->
         <button
-          class="absolute -right-2 xl:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
+          class="shrink-0 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
           :disabled="currentIndex >= maxIndex"
           @click="next"
         >

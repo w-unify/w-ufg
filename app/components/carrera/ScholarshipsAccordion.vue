@@ -63,9 +63,7 @@ function toggleItem(index: number) {
             :style="{ maxHeight: activeIndex === index ? '1000px' : '0px' }"
           >
             <div class="px-6 pb-8 xl:px-10 xl:pb-12 text-left">
-              <p class="text-sm xl:text-base leading-relaxed text-dark" :class="{ 'mb-8': item.image }">
-                {{ item.content }}
-              </p>
+              <div class="text-sm xl:text-base leading-relaxed text-dark" :class="{ 'mb-8': item.image }" v-html="item.content"></div>
               <div v-if="item.image" class="flex justify-center mb-10">
                 <div class="rounded-content overflow-hidden max-w-[500px]">
                   <img :src="item.image" alt="Financiación" class="w-full h-auto">

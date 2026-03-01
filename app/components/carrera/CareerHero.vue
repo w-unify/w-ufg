@@ -5,6 +5,7 @@ interface Props {
   image?: string
   modality?: string
   asuEnriched?: boolean
+  showAsuLogo?: boolean
   duration?: string
   degree?: string
   asuLogoImage?: string
@@ -58,7 +59,7 @@ const props = defineProps<Props>()
             </div>
           </div>
 
-          <div v-if="asuEnriched" class="asu-floating-logo">
+          <div v-if="showAsuLogo" class="asu-floating-logo">
             <img :src="asuLogoImage" alt="ASU Logo" class="w-[70px] h-[70px] xl:w-[87px] xl:h-[87px]">
           </div>
         </div>

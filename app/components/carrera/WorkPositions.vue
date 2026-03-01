@@ -42,9 +42,7 @@ onMounted(() => {
 <template>
   <section class="pt-16 pb-8 xl:pt-32 xl:pb-16">
     <div class="container mx-auto max-w-[1400px] px-6">
-      <h2 class="heading-2 mb-12 reveal">
-        <span class="bg-accent text-white px-3 py-1">{{ sectionTitle }}</span>
-      </h2>
+      <h2 class="heading-2 text-primary mb-12 reveal">{{ sectionTitle }}</h2>
 
       <div class="relative px-10 xl:px-14 reveal delay-200">
         <!-- Swiper -->

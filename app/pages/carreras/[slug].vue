@@ -28,6 +28,7 @@ const heroImage = computed(() => firstAssetUrl(resolveSquidexField<string[]>(car
 const heroModality = computed(() => data.value?.modalidadNombre || '')
 const heroDuration = computed(() => resolveSquidexField<string>(carrera.value?.duracion, 'es') || '')
 const heroEsASU = computed(() => resolveSquidexField<boolean>(carrera.value?.esASU, 'iv') ?? false)
+const heroCheckEnriquecidoASU = computed(() => resolveSquidexField<boolean>(carrera.value?.checkEnriquecidoASU, 'iv') ?? resolveSquidexField<boolean>(carrera.value?.checkEnriquecidoASU, 'es') ?? false)
 const heroDegree = computed(() => {
   if (heroEsASU.value) return 'Doble Titulación'
   return resolveSquidexField<string>(carrera.value?.degree, 'es') || ''
@@ -138,7 +139,9 @@ useHead({
         :modality="heroModality"
         :duration="heroDuration"
         :degree="heroDegree"
-        :asu-enriched="heroEsASU"
+        :asu-enriched="heroCheckEnriquecidoASU"
+        :show-asu-logo="heroEsASU"
+        :asu-logo-image="'/img/carreras/asu-circulo.webp'"
       />
 
       <CarreraDiscoverCareer

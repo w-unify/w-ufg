@@ -54,10 +54,26 @@ export default defineEventHandler(async (event) => {
         } catch {}
         return null
       })(),
-      // TODAS las materias de una vez (más eficiente que 100+ llamadas individuales)
+      // TODAS las materias con paginación (Squidex limita a 200 por página)
       (async () => {
         try {
-          return await fetchSquidexContent<MateriaData>('materias', { $top: 500 })
+          const pageSize = 200
+          const first = await fetchSquidexContent<MateriaData>('materias', { $top: String(pageSize), $skip: '0' })
+          const total = first.total
+          let allItems = [...first.items]
+
+          if (total > pageSize) {
+            const pages = Math.ceil(total / pageSize)
+            const requests = []
+            for (let page = 1; page < pages; page++) {
+              requests.push(fetchSquidexContent<MateriaData>('materias', { $top: String(pageSize), $skip: String(page * pageSize) }))
+            }
+            const results = await Promise.all(requests)
+            results.forEach(r => { allItems = allItems.concat(r.items) })
+          }
+
+          console.log(`[detalle-carrera] Materias totales obtenidas: ${allItems.length} de ${total}`)
+          return { items: allItems, total }
         } catch {
           return { items: [], total: 0 }
         }
@@ -82,13 +98,24 @@ export default defineEventHandler(async (event) => {
 
         console.log(`[detalle-carrera] Total materias en Map: ${materiasMap.size}`)
         console.log(`[detalle-carrera] Total ciclos en pensum: ${pensumRaw.length}`)
+        
+        // Log de primeros 3 IDs en el Map para debug
+        const firstMapIds = Array.from(materiasMap.keys()).slice(0, 3)
+        console.log(`[detalle-carrera] Ejemplo IDs en Map:`, firstMapIds)
 
         // Construir pensum resuelto (instantáneo con Map)
-        pensumResuelto = pensumRaw.map(ciclo => {
-          const materias = (ciclo.MateriasDelCiclo || []).map((id: string) => {
+        pensumResuelto = pensumRaw.map((ciclo, cicloIdx) => {
+          const materias = (ciclo.MateriasDelCiclo || []).map((id: string, materiaIdx: number) => {
+            // Log del ID que estamos buscando
+            if (cicloIdx === 0 && materiaIdx === 0) {
+              console.log(`[detalle-carrera] Buscando ID (Ciclo 1, Materia 1): "${id}"`)
+              console.log(`[detalle-carrera] Tipo de ID: ${typeof id}`)
+              console.log(`[detalle-carrera] Longitud ID: ${id.length}`)
+            }
+            
             const materia = materiasMap.get(id)
             if (!materia) {
-              console.log(`[detalle-carrera] ⚠️ Materia no encontrada: ${id}`)
+              console.log(`[detalle-carrera] ⚠️ Materia no encontrada en ${ciclo.nombreCiclo}: ID="${id}"`)
               return { nombre: `[Materia no encontrada: ${id.substring(0, 8)}...]`, esASU: false }
             }
             return materia

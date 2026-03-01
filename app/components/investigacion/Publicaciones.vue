@@ -27,6 +27,24 @@ const filtered = computed(() => {
     p.categoria.toLowerCase().includes(q)
   )
 })
+
+const downloadFile = async (url: string, filename: string) => {
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const blobUrl = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = blobUrl
+    link.download = filename || 'publicacion.pdf'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(blobUrl)
+  } catch (error) {
+    console.error('Error al descargar:', error)
+    window.open(url, '_blank')
+  }
+}
 </script>
 
 <template>
@@ -83,15 +101,13 @@ const filtered = computed(() => {
             <h3 class="font-futura-bold text-dark text-base leading-[1.1] mb-4 grow line-clamp-3">
               {{ pub.titulo }}
             </h3>
-            <a
-              :href="pub.botonUrl"
-              target="_blank"
-              rel="noopener"
-              class="btn-secondary btn-sm group"
+            <button
+              @click="downloadFile(pub.botonUrl, pub.titulo)"
+              class="btn-secondary btn-sm group cursor-pointer"
             >
               <span>{{ pub.botonNombre }}</span>
               <div class="btn-circle"></div>
-            </a>
+            </button>
           </div>
         </article>
 

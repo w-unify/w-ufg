@@ -1,5 +1,6 @@
 <script setup lang="ts">
 interface ColaboradorItem {
+  titulo: string
   parrafo: string
 }
 
@@ -28,7 +29,7 @@ onUnmounted(() => {
 })
 
 function updateVisible() {
-  visibleCount.value = window.innerWidth >= 1280 ? 3 : window.innerWidth >= 768 ? 2 : 1
+  visibleCount.value = window.innerWidth >= 1280 ? 4 : window.innerWidth >= 768 ? 2 : 1
 }
 
 const maxIndex = computed(() => Math.max(0, props.items.length - visibleCount.value))
@@ -85,8 +86,11 @@ const translateX = computed(() => {
               class="h-auto shrink-0"
               :style="{ width: `calc(${100 / visibleCount}% - 12px)` }"
             >
-              <div class="bg-muted rounded-card p-5 xl:p-6 h-full flex flex-col reveal delay-100">
-                <div v-html="item.parrafo"></div>
+              <div class="bg-muted rounded-card p-5 xl:p-6 h-full flex flex-col text-center xl:text-left reveal delay-100">
+                <h3 v-if="item.titulo" class="text-center font-futura-bold text-dark text-lg xl:text-xl leading-tight mb-3 uppercase border-b border-dark/10 pb-3">
+                  {{ item.titulo }}
+                </h3>
+                <div class="text-sm xl:text-base text-left leading-[1.3] text-dark" v-html="item.parrafo"></div>
               </div>
             </article>
           </div>

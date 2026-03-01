@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+
 interface TabItem {
   titulo: string
   contenido: string
@@ -21,6 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const activeTab = ref(0)
+const modules = [Navigation]
 </script>
 
 <template>
@@ -37,34 +43,49 @@ const activeTab = ref(0)
 
         <!-- Tabs Nav -->
         <div class="w-full xl:w-[300px] shrink-0">
-          <div class="relative xl:sticky xl:top-[130px]">
-
-            <!-- Mobile: scroll horizontal con flechas -->
-            <div class="relative px-10 xl:px-0">
-              <div class="flex xl:hidden gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+          <div class="relative xl:sticky xl:top-[130px] px-10 xl:px-0">
+            
+            <!-- Mobile: Swiper -->
+            <Swiper
+              :modules="modules"
+              :slides-per-view="1"
+              :space-between="12"
+              :navigation="{
+                prevEl: '.swiper-prev-lineas',
+                nextEl: '.swiper-next-lineas',
+              }"
+              class="xl:hidden !overflow-hidden"
+              :breakpoints="{
+                1280: {
+                  enabled: false
+                }
+              }"
+            >
+              <SwiperSlide
+                v-for="(tab, i) in tabs"
+                :key="tab.id"
+              >
                 <button
-                  v-for="(tab, i) in tabs"
-                  :key="tab.id"
-                  class="shrink-0 tab-btn snap-start"
+                  class="tab-btn w-full"
                   :class="activeTab === i ? 'active' : ''"
                   @click="activeTab = i"
                 >
-                  <span class="text-[18px] p-2 whitespace-nowrap">{{ tab.label }}</span>
+                  <span class="text-[18px] xl:text-base p-2 xl:p-0">{{ tab.label }}</span>
                 </button>
-              </div>
-              <button
-                class="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm"
-                @click="activeTab = Math.max(0, activeTab - 1)"
-              >
-                <svg class="w-3 h-3 rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-              </button>
-              <button
-                class="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm"
-                @click="activeTab = Math.min(tabs.length - 1, activeTab + 1)"
-              >
-                <svg class="w-3 h-3 -rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-              </button>
-            </div>
+              </SwiperSlide>
+            </Swiper>
+
+            <!-- Botones de navegación mobile -->
+            <button class="swiper-prev-lineas absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
+              <svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button class="swiper-next-lineas absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
 
             <!-- Desktop: vertical list -->
             <div class="hidden xl:flex xl:flex-col xl:gap-4">

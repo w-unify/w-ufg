@@ -62,6 +62,7 @@ export default defineEventHandler(async (_event) => {
     const colaboradoresFondo = assetUrl(firstVal(data?.['seccion3-colaboradores-slider-fondo']))
     const colaboradoresRaw: any[] = firstVal(data?.['seccion3-colaboradores-slider']) ?? []
     const colaboradores = colaboradoresRaw.map((c: any) => ({
+      titulo: c.titulo ?? '',
       parrafo: c.parrafo ?? '',
     }))
 

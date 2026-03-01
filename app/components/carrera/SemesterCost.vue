@@ -29,10 +29,7 @@ withDefaults(defineProps<Props>(), {
   ],
   totalLabel: 'Costo Global del Ciclo de Admisión',
   totalAmount: '$1,506',
-  disclaimers: () => [
-    '* Entiendo y acepto que la cuota mensual, aranceles y laboratorios podrían incrementar hasta un 5% cada año que duren mis estudios.',
-    '* Aranceles vigentes hasta el 31 de julio del 2026. A partir de esa fecha, se aplicará un ajuste en los montos.'
-  ]
+  disclaimers: () => []
 })
 </script>
 
@@ -63,13 +60,13 @@ withDefaults(defineProps<Props>(), {
         </div>
       </div>
 
-      <div class="max-w-[850px] mx-auto mt-4 space-y-3">
-        <p
+      <div v-if="disclaimers && disclaimers.length > 0" class="max-w-[850px] mx-auto mt-4 space-y-3">
+        <div
           v-for="(note, index) in disclaimers"
           :key="index"
           class="text-[13px] xl:text-[15px] leading-relaxed text-dark/70"
           v-html="renderMarkdown(note)"
-        />
+        ></div>
       </div>
     </div>
   </section>

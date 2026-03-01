@@ -80,15 +80,28 @@ export default defineEventHandler(async (event) => {
           materiasMap.set(materia.id, { nombre, esASU })
         })
 
+        console.log(`[detalle-carrera] Total materias en Map: ${materiasMap.size}`)
+        console.log(`[detalle-carrera] Total ciclos en pensum: ${pensumRaw.length}`)
+
         // Construir pensum resuelto (instantáneo con Map)
-        pensumResuelto = pensumRaw.map(ciclo => ({
-          nombreCiclo: ciclo.nombreCiclo,
-          esASU: (ciclo.esASU as any) === true || (ciclo.esASU as any) === 'true' || (ciclo.esASU as any)?.iv === true || false,
-          materias: (ciclo.MateriasDelCiclo || []).map((id: string) => materiasMap.get(id) ?? { nombre: id, esASU: false })
-        }))
+        pensumResuelto = pensumRaw.map(ciclo => {
+          const materias = (ciclo.MateriasDelCiclo || []).map((id: string) => {
+            const materia = materiasMap.get(id)
+            if (!materia) {
+              console.log(`[detalle-carrera] ⚠️ Materia no encontrada: ${id}`)
+              return { nombre: `[Materia no encontrada: ${id.substring(0, 8)}...]`, esASU: false }
+            }
+            return materia
+          })
+          return {
+            nombreCiclo: ciclo.nombreCiclo,
+            esASU: (ciclo.esASU as any) === true || (ciclo.esASU as any) === 'true' || (ciclo.esASU as any)?.iv === true || false,
+            materias
+          }
+        })
       }
-    } catch {
-      // continuar sin pensum resuelto
+    } catch (error) {
+      console.error('[detalle-carrera] Error al resolver pensum:', error)
     }
 
     return {

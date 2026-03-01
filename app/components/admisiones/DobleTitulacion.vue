@@ -14,15 +14,16 @@ interface CostoItem {
 interface Props {
   videoUrl?: string
   requisitos?: RequisitoSlide[]
+  tituloSeccion?: string
   costos?: CostoItem[]
   totalLabel?: string
   totalMonto?: string
   notas?: string[]
-  politicas?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   videoUrl: 'https://www.youtube.com/embed/o46K1-GRlX4',
+  tituloSeccion: 'Costos del programa de Doble Titulación:',
   requisitos: () => [
     {
       titulo: 'Para inscribirte en UFG (Año 0)',
@@ -105,7 +106,7 @@ const props = withDefaults(defineProps<Props>(), {
     <!-- Costos -->
     <section class="bg-white py-12 xl:py-16 px-6 xl:px-0">
       <div class="container mx-auto max-w-[850px]">
-        <h3 class="font-futura-bold text-xl mb-6 reveal">Costos del programa de Doble Titulación:</h3>
+        <h3 class="font-futura-bold text-xl mb-6 reveal">{{ tituloSeccion }}</h3>
 
         <div class="max-w-[850px] mx-auto border border-[#3A3D3B] rounded-card p-6 md:p-8 xl:px-12 xl:py-10 reveal delay-200">
           <div class="flex flex-col gap-3 xl:gap-4">
@@ -126,14 +127,10 @@ const props = withDefaults(defineProps<Props>(), {
           </div>
         </div>
 
-        <div v-if="notas?.length || politicas?.length" class="max-w-[850px] mx-auto mt-4 reveal delay-300">
-          <div v-if="notas?.length" class="space-y-4 mb-6">
-            <p class="font-futura-bold text-dark">Importante:</p>
-            <p v-for="(nota, i) in notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">{{ nota }}</p>
-          </div>
-          <div v-if="politicas?.length" class="space-y-3">
-            <p class="font-futura-bold text-dark/70 text-sm xl:text-base">Políticas del programa:</p>
-            <p v-for="(pol, i) in politicas" :key="i" class="text-[13px] xl:text-[15px] leading-relaxed text-dark/70">{{ pol }}</p>
+        <div v-if="notas?.length" class="max-w-[850px] mx-auto mt-4 reveal delay-300">
+          <div class="space-y-4">
+            <!-- <p class="font-futura-bold text-dark">Importante:</p> -->
+            <div v-for="(nota, i) in notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed" v-html="nota"></div>
           </div>
         </div>
       </div>

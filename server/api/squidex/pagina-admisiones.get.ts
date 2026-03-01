@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     // ── 1. Pasos de admisión ──────────────────────────────────────────────────
     const pasosRaw: any[] = resolve(data?.pasoAdmision) ?? []
     const pasos = pasosRaw.map((p: any, i: number) => ({
-      numero: `PASO ${i + 1}`,
+      numero: p.nombre ?? `PASO ${i + 1}`,
       titulo: p.titulo ?? '',
       descripcion: p.descripcion ?? '',
       icono: assetUrl(p.icono)
@@ -97,19 +97,18 @@ export default defineEventHandler(async (event) => {
     } : null
 
     // ── 5. Beneficios UFG+ASU ─────────────────────────────────────────────────
-    // BeneficiosUFG es un objeto con property1 como clave dinámica; tomamos el primer valor
-    const beneficiosField: any = resolve(data?.BeneficiosUFG)
-    const beneficiosRaw: any = beneficiosField
-      ? (Array.isArray(beneficiosField) ? beneficiosField[0] : Object.values(beneficiosField)[0])
-      : null
+    const beneficiosRaw: any = resolve(data?.BeneficiosUFG)
+    const btnBeneficiosRaw: any = resolve(data?.btnBeneficios)
     const beneficios = beneficiosRaw ? {
       titulo: beneficiosRaw.titulo ?? '',
-      logoUrl: assetUrl(beneficiosRaw.imagen),
+      logoUrl: assetUrl(beneficiosRaw.bannerImg),
       items: (beneficiosRaw.items ?? []).map((item: any) => ({
         titulo: item.titulo ?? '',
         descripcion: item.texto ?? '',
         imagen: assetUrl(item.imagen)
-      }))
+      })),
+      ctaText: btnBeneficiosRaw?.texto,
+      ctaLink: btnBeneficiosRaw?.enlace
     } : null
 
     // ── 6. Admisión Postgrado ─────────────────────────────────────────────────

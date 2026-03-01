@@ -13,18 +13,7 @@ interface Props {
   logoUrl?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  sectionTitle: 'Beneficios UFG+ASU',
-  beneficios: () => [
-    { titulo: 'Asignaturas Enriquecidas', descripcion: 'Más de 500 asignaturas enriquecidas con contenido académico de ASU®' },
-    { titulo: 'Profesionales Bilingües', descripcion: 'Formación gratuita en Idioma Inglés que potencia tu perfil profesional.' },
-    { titulo: 'Global Signature Courses', descripcion: 'Vive la experiencia global junto a docentes de la red de Universidades potenciadas por Arizona State University.' },
-    { titulo: 'Máster Class', descripcion: 'Aprende de expertos internacionales en sesiones exclusivas con enfoque práctico e innovador.' },
-    { titulo: 'Maestrías Aceleradas', descripcion: 'Completa tu carrera de pregrado y maestría en menos tiempo con programas integrados UFG + ASU.' }
-  ],
-  ctaText: 'VER PROGRAMAS 3+1',
-  ctaLink: '/oferta-academica'
-})
+const props = defineProps<Props>()
 
 const currentIndex = ref(0)
 const slidesPerView = ref(3)

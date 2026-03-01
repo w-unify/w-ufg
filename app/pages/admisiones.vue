@@ -58,6 +58,8 @@ interface BeneficiosData {
   titulo: string
   logoUrl?: string
   items: BeneficioItem[]
+  ctaText?: string
+  ctaLink?: string
 }
 
 interface PostgradoPaso {
@@ -154,6 +156,7 @@ useHead({
       <section id="doble-titulacion">
         <AdmisionesDobleTitulacion
           v-if="data?.costo"
+          :titulo-seccion="data.costo.tituloSeccion"
           :costos="data.costo.filas"
           :total-label="data.costo.totalLabel"
           :total-monto="data.costo.totalMonto"
@@ -172,6 +175,8 @@ useHead({
         :section-title="data.beneficios.titulo"
         :beneficios="data.beneficios.items"
         :logo-url="data.beneficios.logoUrl || '/img/admisiones/ufg-y-asu.webp'"
+        :cta-text="data.beneficios.ctaText"
+        :cta-link="data.beneficios.ctaLink"
       />
 
       <!-- Requisitos de Admisión de Postgrado -->

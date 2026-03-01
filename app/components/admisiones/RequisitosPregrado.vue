@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+
 interface StepCard {
   numero: number
   contenido: string
@@ -61,6 +65,51 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const activeTab = ref(props.tabs?.[0]?.id ?? '')
+const swiperRef = ref<HTMLElement | null>(null)
+let tabsSwiper: Swiper | null = null
+
+function handleTabsSwiper() {
+  if (window.innerWidth < 1024) {
+    if (!tabsSwiper && swiperRef.value) {
+      tabsSwiper = new Swiper(swiperRef.value, {
+        modules: [Navigation],
+        slidesPerView: 1,
+        centeredSlides: true,
+        navigation: {
+          nextEl: '.swiper-next-tabs',
+          prevEl: '.swiper-prev-tabs',
+        },
+        on: {
+          slideChange: function(swiper: Swiper) {
+            const activeSlide = swiper.slides[swiper.activeIndex]
+            const btn = activeSlide?.querySelector('button')
+            if (btn) {
+              const tabId = btn.getAttribute('data-tab-id')
+              if (tabId) activeTab.value = tabId
+            }
+          }
+        }
+      })
+    }
+  } else {
+    if (tabsSwiper) {
+      tabsSwiper.destroy(true, true)
+      tabsSwiper = null
+    }
+  }
+}
+
+onMounted(() => {
+  handleTabsSwiper()
+  window.addEventListener('resize', handleTabsSwiper)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleTabsSwiper)
+  if (tabsSwiper) {
+    tabsSwiper.destroy(true, true)
+  }
+})
 </script>
 
 <template>
@@ -71,18 +120,35 @@ const activeTab = ref(props.tabs?.[0]?.id ?? '')
       <div class="flex flex-col xl:flex-row gap-5 xl:gap-8">
         <!-- Tabs nav -->
         <div class="w-full xl:w-[280px] shrink-0">
-          <div class="sticky top-[130px] flex xl:flex-col gap-3 overflow-x-auto xl:overflow-visible pb-2 xl:pb-0">
-            <button
-              v-for="tab in tabs"
-              :key="tab.id"
-              class="tab-btn whitespace-nowrap xl:whitespace-normal w-auto xl:w-full flex items-center justify-between"
-              :class="activeTab === tab.id ? 'active' : ''"
-              @click="activeTab = tab.id"
-            >
-              <span class="text-base p-2 xl:p-0">{{ tab.label }}</span>
-              <svg class="w-4 h-4 hidden xl:block ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-              </svg>
+          <div class="relative sticky top-[130px] px-10 xl:px-0">
+            <div ref="swiperRef" class="swiper swiper-tabs-nav !overflow-hidden">
+              <div class="swiper-wrapper xl:!flex xl:!flex-col xl:gap-3">
+                <div
+                  v-for="tab in tabs"
+                  :key="tab.id"
+                  class="swiper-slide xl:!w-full"
+                >
+                  <button
+                    :data-tab-id="tab.id"
+                    class="tab-btn w-full flex items-center justify-between"
+                    :class="activeTab === tab.id ? 'active' : ''"
+                    @click="activeTab = tab.id"
+                  >
+                    <span class="text-[18px] xl:text-base p-2 xl:p-0">{{ tab.label }}</span>
+                    <svg class="w-4 h-4 hidden xl:block ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botones de navegación (solo mobile) -->
+            <button class="swiper-prev-tabs absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
+              <span class="icon-arrow rotate-90 !bg-dark !w-3 !h-3"></span>
+            </button>
+            <button class="swiper-next-tabs absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
+              <span class="icon-arrow -rotate-90 !bg-dark !w-3 !h-3"></span>
             </button>
           </div>
         </div>

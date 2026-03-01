@@ -35,7 +35,7 @@ withDefaults(defineProps<Props>(), {
               <span class="absolute inset-0 m-auto w-full h-0.5 bg-white"></span>
             </div>
           </summary>
-          <div class="pt-6 text-base xl:text-lg opacity-90 leading-relaxed max-w-[850px]">
+          <div class="pt-6 text-base xl:text-lg opacity-90 leading-relaxed max-w-[850px] text-white!">
             <img
               v-if="item.imagen"
               :src="item.imagen"
@@ -50,3 +50,9 @@ withDefaults(defineProps<Props>(), {
     </div>
   </section>
 </template>
+
+<style scoped>
+details :deep(*) {
+  color: white !important;
+}
+</style>

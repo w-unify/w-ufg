@@ -6,6 +6,7 @@ interface Boton {
 }
 
 interface Props {
+  titulo?: string
   parrafo?: string
   imagen?: string
   nombre?: string
@@ -14,6 +15,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+  titulo: 'Asesoría General',
   parrafo: 'Consultas generales',
   imagen: '',
   nombre: 'Experiencia Estudiantil',
@@ -27,7 +29,7 @@ withDefaults(defineProps<Props>(), {
     <div class="container mx-auto px-6">
 
       <div class="text-center mb-12 xl:mb-10">
-        <h2 class="heading-2 text-primary mb-4 reveal">Asesoría General</h2>
+        <h2 class="heading-2 text-primary mb-4 reveal">{{ titulo }}</h2>
         <div class="text-dark/80 max-w-[800px] mx-auto reveal delay-100" v-html="parrafo"></div>
       </div>
 

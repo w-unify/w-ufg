@@ -39,10 +39,16 @@ withDefaults(defineProps<Props>(), {
               <span class="absolute inset-0 m-auto w-full h-0.5 bg-white"></span>
             </div>
           </summary>
-          <div class="pt-6 text-base xl:text-lg opacity-90 leading-relaxed max-w-[850px]" v-html="item.parrafo"></div>
+          <div class="faq-content pt-6 text-white! text-base xl:text-lg leading-relaxed max-w-[850px]" v-html="item.parrafo"></div>
         </details>
       </div>
 
     </div>
   </section>
 </template>
+
+<style scoped>
+.faq-content :deep(*) {
+  color: white !important;
+}
+</style>

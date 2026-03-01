@@ -32,6 +32,7 @@ interface FechasData {
 }
 
 interface AsesoriaData {
+  titulo: string
   parrafo: string
   imagen: string
   nombre: string
@@ -124,6 +125,7 @@ useHead({
       <!-- Sección 4: Asesoría General -->
       <SmartUAsesoria
         v-if="data?.asesoria"
+        :titulo="data.asesoria.titulo"
         :parrafo="data.asesoria.parrafo"
         :imagen="data.asesoria.imagen"
         :nombre="data.asesoria.nombre"

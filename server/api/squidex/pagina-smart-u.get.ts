@@ -81,6 +81,7 @@ export default defineEventHandler(async (_event) => {
     // ── Sección 4: Asesoría ──────────────────────────────────────────────────
     const asesoriaRaw: any = firstVal(data?.['seccion4-asesoria'])
     const asesoria = asesoriaRaw ? {
+      titulo: asesoriaRaw.contactoTitulo ?? '',
       parrafo: stripHtml(asesoriaRaw.contactoParrafo ?? ''),
       imagen: assetUrl(asesoriaRaw.contactoImagen),
       nombre: asesoriaRaw.contactoNombre ?? '',

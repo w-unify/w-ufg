@@ -85,6 +85,7 @@ export default defineEventHandler(async (_event) => {
       nombre: c.nombreClub ?? '',
       horario: c.horarioClub ?? '',
       modalidad: c.modalidadClub ?? '',
+      colorCirculo: c.colorCirculo ?? '',
     }))
 
     // Sección 4: Galería

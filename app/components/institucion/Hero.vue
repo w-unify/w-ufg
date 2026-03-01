@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Props {
   bannerFondo?: string
+  bannerFondoMobile?: string
   logo?: string
   mision?: string
   vision?: string
@@ -10,6 +11,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   bannerFondo: '',
+  bannerFondoMobile: '',
   logo: '',
   mision: '',
   vision: '',
@@ -23,14 +25,15 @@ withDefaults(defineProps<Props>(), {
 
     <div class="relative min-h-[600px] xl:min-h-[700px] flex flex-col items-center pt-16 xl:pt-12 px-6">
 
-      <div class="absolute inset-x-0 top-0 z-0 w-full opacity-50">
+      <picture class="absolute inset-x-0 top-0 z-0 w-full opacity-50">
+        <source v-if="bannerFondo" media="(min-width: 1280px)" :srcset="bannerFondo">
         <img
-          v-if="bannerFondo"
-          :src="bannerFondo"
+          v-if="bannerFondoMobile || bannerFondo"
+          :src="bannerFondoMobile || bannerFondo"
           class="w-full h-auto object-top"
           alt="Fachada UFG"
         >
-      </div>
+      </picture>
 
       <div class="relative z-20 container mx-auto flex flex-col items-center">
 

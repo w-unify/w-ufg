@@ -3,6 +3,7 @@ interface ClubItem {
   nombre: string
   horario: string
   modalidad: string
+  colorCirculo?: string
 }
 
 interface Props {
@@ -49,8 +50,11 @@ withDefaults(defineProps<Props>(), {
               >
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 xl:gap-6">
                   <div class="flex items-start gap-2 xl:gap-4">
-                    <div class="shrink-0 mt-2">
-                      <span class="block w-5 h-5 xl:w-6 xl:h-6 rounded-full border-[3px] border-gray-200 bg-primary" />
+                    <div v-if="club.colorCirculo" class="shrink-0 mt-2">
+                      <span 
+                        class="block w-5 h-5 xl:w-6 xl:h-6 rounded-full"
+                        :style="{ backgroundColor: club.colorCirculo }"
+                      />
                     </div>
                     <div class="space-y-2">
                       <h3 class="font-futura-bold text-dark text-base xl:text-xl leading-tight">

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface HeroData {
   bannerFondo: string
+  bannerFondoMobile: string
   logo: string
   mision: string
   vision: string
@@ -97,6 +98,7 @@ useHead({
       <InstitucionHero
         v-if="data?.hero"
         :banner-fondo="data.hero.bannerFondo"
+        :banner-fondo-mobile="data.hero.bannerFondoMobile"
         :logo="data.hero.logo"
         :mision="data.hero.mision"
         :vision="data.hero.vision"

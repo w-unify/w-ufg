@@ -31,6 +31,7 @@ export default defineEventHandler(async (_event) => {
 
     // ── Sección 1: Hero ───────────────────────────────────────────────────────
     const bannerFondo = assetUrl(firstVal(data?.['seccion1-bannerFondo']))
+    const bannerFondoMobile = assetUrl(firstVal(data?.['seccion1-bannerFondoMobile']))
     const logo = assetUrl(firstVal(data?.['seccion1-logo']))
     const mision = firstVal<string>(data?.['seccion1-mision']) ?? ''
     const vision = firstVal<string>(data?.['seccion1-vision']) ?? ''
@@ -96,7 +97,7 @@ export default defineEventHandler(async (_event) => {
 
     return {
       tituloPagina: firstVal<string>(data?.['tituloPagina']) ?? 'Institución',
-      hero: { bannerFondo, logo, mision, vision },
+      hero: { bannerFondo, bannerFondoMobile, logo, mision, vision },
       valoresTitulo,
       valores,
       historiaTitulo,

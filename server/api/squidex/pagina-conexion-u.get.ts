@@ -107,7 +107,9 @@ export default defineEventHandler(async (_event) => {
 
     // ── Sección 3: Contactos ──────────────────────────────────────────────────
     const contactosRaw: any[] = firstVal(data?.['seccion3-contactos']) ?? []
+    const contactoTitulo = contactosRaw.length > 0 ? contactosRaw[0].contactoTitulo : undefined
     const contactos = contactosRaw.map((c: any) => ({
+      titulo: c.contactoTitulo ?? '',
       parrafo: stripHtml(c.contactoParrafo ?? ''),
       imagen: assetUrl(c.contactoImagen),
       nombre: c.contactoNombre ?? '',
@@ -145,6 +147,7 @@ export default defineEventHandler(async (_event) => {
       beneficiosTabs: allBeneficiosTabs.length ? allBeneficiosTabs : (beneficios?.tabs ?? []),
       videoSlider,
       bannerFondo,
+      contactoTitulo,
       contactos,
       joinWork,
     }

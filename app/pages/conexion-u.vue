@@ -24,6 +24,7 @@ interface Boton {
 }
 
 interface Contacto {
+  titulo?: string
   parrafo: string
   imagen: string
   nombre: string
@@ -41,6 +42,7 @@ interface ConexionUPageData {
   beneficiosTabs: Tab[]
   videoSlider: VideoItem[]
   bannerFondo: string
+  contactoTitulo?: string
   contactos: Contacto[]
   joinWork: JoinWorkData
 }
@@ -98,6 +100,7 @@ useHead({
       <!-- Sección 3: Contactos / Asesorías -->
       <ConexionUContactos
         v-if="data?.contactos?.length"
+        :titulo="data.contactoTitulo"
         :contactos="data.contactos"
       />
 

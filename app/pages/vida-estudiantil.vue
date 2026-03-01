@@ -1,6 +1,14 @@
 <script setup lang="ts">
 const { data, error, status } = await useFetch('/api/squidex/pagina-vida-estudiantil')
 useScrollAnimations()
+
+useHead({
+  title: 'Vida Estudiantil - UFG',
+  meta: [
+    { name: 'description', content: 'Descubre la vida estudiantil en UFG: eventos, calendario académico, actividades y experiencias que enriquecen tu formación universitaria.' },
+    { name: 'keywords', content: 'vida estudiantil UFG, eventos UFG, calendario académico UFG, actividades estudiantiles, experiencia universitaria UFG' }
+  ]
+})
 </script>
 
 <template>

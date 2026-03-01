@@ -235,7 +235,7 @@ onUnmounted(() => {
 
           <!-- Menú Experiencia Estudiantil -->
           <li class="group/mega static">
-            <NuxtLink to="/experiencia-estudiantil" class="nav-link flex items-center gap-2 py-10">
+            <NuxtLink to="/vida-estudiantil" class="nav-link flex items-center gap-2 py-10">
               Experiencia Estudiantil <img src="/img/globals/down-arrow.svg" class="w-3 transition-transform group-hover/mega:rotate-180" alt="arrow">
             </NuxtLink>
             <div class="absolute top-full left-1/2 -translate-x-1/2 w-[1000px] bg-[#F5F5F5] border-x border-b border-dark/5 opacity-0 invisible group-hover/mega:opacity-100 group-hover/mega:visible transition-all duration-300 z-[90]">

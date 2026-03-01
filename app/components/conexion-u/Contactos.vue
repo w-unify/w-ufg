@@ -6,6 +6,7 @@ interface Boton {
 }
 
 interface Contacto {
+  titulo?: string
   parrafo: string
   imagen: string
   nombre: string
@@ -14,6 +15,7 @@ interface Contacto {
 }
 
 interface Props {
+  titulo?: string
   contactos?: Contacto[]
 }
 
@@ -27,9 +29,9 @@ withDefaults(defineProps<Props>(), {
     <div class="container mx-auto px-6">
 
       <template v-for="(contacto, i) in contactos" :key="i">
-        <div class="text-center mb-12 xl:mb-10" :class="i > 0 ? 'pt-16 xl:pt-20' : ''">
-          <h4 class="font-futura-bold text-dark text-xl xl:text-2xl mb-2 reveal">{{ contacto.nombre }}</h4>
-          <p class="text-dark/80 max-w-[800px] mx-auto reveal delay-100">{{ contacto.parrafo }}</p>
+        <div class="text-center mb-8 xl:mb-10" :class="i > 0 ? 'pt-16 xl:pt-20' : ''">
+          <h4 v-if="contacto.titulo" class="font-futura-bold text-dark text-xl xl:text-2xl mb-4 reveal">{{ contacto.titulo }}</h4>
+          <p class="text-dark/80 max-w-[800px] mx-auto text-sm xl:text-base reveal delay-100">{{ contacto.parrafo }}</p>
         </div>
 
         <div class="max-w-[850px] mx-auto border border-primary rounded-big p-5 xl:py-5 xl:pl-8 xl:pr-8 reveal delay-200">

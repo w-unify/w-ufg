@@ -10,11 +10,15 @@ interface CalendarioEvent {
 
 interface Props {
   titulo?: string
+  btnTitulo?: string
+  btnArchivo?: string
   events?: CalendarioEvent[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
   titulo: 'Calendario Académico',
+  btnTitulo: '',
+  btnArchivo: '',
   events: () => [],
 })
 
@@ -140,6 +144,17 @@ function formatDate(ds: string) {
     <div class="container mx-auto px-6">
       <div class="text-center mb-10">
         <h2 class="heading-2 text-dark mb-6">{{ titulo }}</h2>
+        <a
+          v-if="btnTitulo && btnArchivo"
+          :href="btnArchivo"
+          download
+          target="_blank"
+          rel="noopener"
+          class="btn-secondary group btn-nm"
+        >
+          <span>{{ btnTitulo }}</span>
+          <div class="btn-circle"></div>
+        </a>
       </div>
 
       <div class="flex flex-col lg:flex-row gap-5 xl:gap-10 max-w-[1100px] mx-auto items-start">

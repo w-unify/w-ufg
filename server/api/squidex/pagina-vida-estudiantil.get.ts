@@ -36,6 +36,8 @@ export default defineEventHandler(async (_event) => {
 
     // Sección 1: Calendario
     const calendarioTitulo = firstVal<string>(data?.['Seccion1-calendarioTitulo']) ?? 'Calendario Académico'
+    const calendarioBtnTitulo = firstVal<string>(data?.['Seccion1-calendariobtnTitulo']) ?? ''
+    const calendarioBtnArchivo = assetUrl(firstVal<string[]>(data?.['Seccion1-calendariobtnArchivo']))
 
     // Obtener todos los eventos del calendario directamente (independiente de refs)
     const calendarioResult = await fetchSquidexContent('calendario-academico', { $top: 500 })
@@ -110,6 +112,8 @@ export default defineEventHandler(async (_event) => {
     return {
       tituloPagina: firstVal<string>(data?.tituloPagina) ?? 'Vida Estudiantil',
       calendarioTitulo,
+      calendarioBtnTitulo,
+      calendarioBtnArchivo,
       calendarioEvents,
       eventosTitulo,
       eventos,

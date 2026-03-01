@@ -49,7 +49,7 @@ withDefaults(defineProps<Props>(), {
             </div>
             <!-- Párrafo -->
             <div class="p-8 xl:p-10 grow">
-              <p class="text-base text-dark/80 leading-relaxed">{{ item.parrafo }}</p>
+              <div class="text-base text-dark/80 leading-relaxed" v-html="item.parrafo"></div>
             </div>
           </div>
 

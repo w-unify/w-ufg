@@ -39,6 +39,8 @@ useHead({
       <!-- Sección 1: Calendario Académico -->
       <VidaEstudiantilCalendarioAcademico
         :titulo="data?.calendarioTitulo"
+        :btn-titulo="data?.calendarioBtnTitulo"
+        :btn-archivo="data?.calendarioBtnArchivo"
         :events="data?.calendarioEvents ?? []"
       />
 

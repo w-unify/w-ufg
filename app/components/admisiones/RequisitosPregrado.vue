@@ -99,13 +99,55 @@ function handleTabsSwiper() {
   }
 }
 
+function checkHashAndActivateTab() {
+  const hash = window.location.hash.replace('#', '')
+  console.log('[RequisitosPregrado] Hash detectado:', hash)
+  console.log('[RequisitosPregrado] Tabs disponibles:', props.tabs?.map(t => t.id))
+  
+  if (hash) {
+    const tabExists = props.tabs?.find(tab => tab.id === hash)
+    console.log('[RequisitosPregrado] Tab encontrada:', tabExists?.label)
+    
+    if (tabExists) {
+      activeTab.value = hash
+      console.log('[RequisitosPregrado] Tab activada:', hash)
+      
+      // Hacer scroll a la sección de requisitos
+      setTimeout(() => {
+        const section = document.getElementById('requisitos')
+        if (section) {
+          const headerOffset = 100 // Offset para el header sticky
+          const elementPosition = section.getBoundingClientRect().top
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          })
+          console.log('[RequisitosPregrado] Scroll realizado a la sección')
+        }
+      }, 100)
+    }
+  }
+}
+
 onMounted(() => {
   handleTabsSwiper()
+  
+  // Esperar a que el DOM esté completamente renderizado
+  nextTick(() => {
+    checkHashAndActivateTab()
+  })
+  
   window.addEventListener('resize', handleTabsSwiper)
+  window.addEventListener('hashchange', () => {
+    checkHashAndActivateTab()
+  })
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleTabsSwiper)
+  window.removeEventListener('hashchange', checkHashAndActivateTab)
   if (tabsSwiper) {
     tabsSwiper.destroy(true, true)
   }

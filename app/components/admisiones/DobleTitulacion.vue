@@ -86,7 +86,7 @@ const embedUrl = computed(() => {
     </section>
 
     <!-- Costos -->
-    <section class="bg-white py-12 xl:py-16 px-6 xl:px-0">
+    <section id="costos" class="bg-white py-12 xl:py-16 px-6 xl:px-0">
       <div class="container mx-auto max-w-[850px]">
         <h3 class="font-futura-bold text-xl mb-6 reveal">{{ tituloSeccion }}</h3>
 

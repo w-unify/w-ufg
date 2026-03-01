@@ -145,7 +145,7 @@ useHead({
       </section>
 
       <!-- Requisitos de Admisión de Pregrado -->
-      <section id="nuevo-ingreso">
+      <section id="requisitos">
         <AdmisionesRequisitosPregrado
           v-if="data?.tabs?.length"
           :tabs="data.tabs"
@@ -153,7 +153,7 @@ useHead({
       </section>
 
       <!-- Prueba de Orientación Vocacional -->
-      <section id="equivalencias">
+      <section id="orientacion-vocacional">
         <AdmisionesPruebaVocacional
           v-if="data?.pov"
           :titulo="data.pov.titulo"

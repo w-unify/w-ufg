@@ -213,7 +213,7 @@ onUnmounted(() => {
                   <ul class="space-y-3 text-base text-dark/70 pt-3">
                     <li><a href="/admisiones#pasos" class="hover:text-primary transition-colors">Pasos de Solicitud de Admisión</a></li>
                     <li><a href="/admisiones#nuevo-ingreso" class="hover:text-primary transition-colors">Nuevo Ingreso</a></li>
-                    <li><a href="/admisiones#equivalencias" class="hover:text-primary transition-colors">Ingreso por Equivalencias</a></li>
+                    <li><a href="/admisiones#ingreso-por-equivalencias" class="hover:text-primary transition-colors">Ingreso por Equivalencias</a></li>
                   </ul>
                 </div>
                 <div>

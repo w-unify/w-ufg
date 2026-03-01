@@ -1,44 +1,41 @@
 <script setup lang="ts">
+import Swiper from 'swiper'
+import { Navigation, Autoplay } from 'swiper/modules'
+import 'swiper/css'
+
 interface Props {
   sectionTitle?: string
   positions?: string[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   sectionTitle: '¿En qué vas a trabajar?',
   positions: () => []
 })
 
-const swiperEl = ref<HTMLElement | null>(null)
-const currentIndex = ref(0)
-const slidesPerView = ref(3)
-
-const totalSlides = computed(() => props.positions?.length ?? 0)
-const maxIndex = computed(() => Math.max(0, totalSlides.value - slidesPerView.value))
-
-function prev() {
-  currentIndex.value = Math.max(0, currentIndex.value - 1)
-}
-
-function next() {
-  currentIndex.value = Math.min(maxIndex.value, currentIndex.value + 1)
-}
-
-const translateX = computed(() => {
-  const slideWidth = 100 / slidesPerView.value
-  return `translateX(-${currentIndex.value * slideWidth}%)`
-})
+const swiperRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  const update = () => {
-    if (window.innerWidth >= 1280) slidesPerView.value = 3
-    else if (window.innerWidth >= 768) slidesPerView.value = 2
-    else slidesPerView.value = 1
-    currentIndex.value = Math.min(currentIndex.value, maxIndex.value)
-  }
-  update()
-  window.addEventListener('resize', update)
-  onUnmounted(() => window.removeEventListener('resize', update))
+  if (!swiperRef.value) return
+  new Swiper(swiperRef.value, {
+    modules: [Navigation, Autoplay],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    loop: true,
+    autoplay: {
+      delay: 3500,
+      disableOnInteraction: true,
+      pauseOnMouseEnter: true,
+    },
+    navigation: {
+      nextEl: '.work-swiper-next',
+      prevEl: '.work-swiper-prev',
+    },
+    breakpoints: {
+      768: { slidesPerView: 2 },
+      1280: { slidesPerView: 3, spaceBetween: 30 },
+    },
+  })
 })
 </script>
 
@@ -50,17 +47,13 @@ onMounted(() => {
       </h2>
 
       <div class="relative px-10 xl:px-14 reveal delay-200">
-        <!-- Slides -->
-        <div class="overflow-hidden w-full" style="padding-right: 2px;">
-          <div
-            class="flex transition-transform duration-300 ease-in-out gap-5 xl:gap-8 pb-1"
-            :style="{ transform: translateX }"
-          >
+        <!-- Swiper -->
+        <div ref="swiperRef" class="swiper !overflow-hidden w-full">
+          <div class="swiper-wrapper">
             <article
               v-for="(position, index) in positions"
               :key="index"
-              class="shrink-0"
-              :style="{ width: `calc(${100 / slidesPerView}% - ${(slidesPerView - 1) * 20 / slidesPerView}px)` }"
+              class="swiper-slide h-auto"
             >
               <div class="bg-muted rounded-card p-6 xl:p-5 min-h-32 xl:min-h-32 flex items-center justify-center text-center">
                 <h3 class="text-lg xl:text-lg font-futura-bold leading-[1.2]">{{ position }}</h3>
@@ -71,26 +64,18 @@ onMounted(() => {
 
         <!-- Botón anterior -->
         <button
-          class="absolute -left-2 xl:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
-          :disabled="currentIndex === 0"
+          class="work-swiper-prev absolute -left-2 xl:-left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors"
           aria-label="Anterior"
-          @click="prev"
         >
-          <svg class="w-4 h-4 rotate-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-          </svg>
+          <span class="icon-arrow rotate-90 !bg-dark"></span>
         </button>
 
         <!-- Botón siguiente -->
         <button
-          class="absolute -right-2 xl:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors disabled:opacity-40"
-          :disabled="currentIndex >= maxIndex"
+          class="work-swiper-next absolute -right-2 xl:-right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 xl:w-12 xl:h-12 bg-[#E5E5E5] rounded-[8px] flex items-center justify-center hover:bg-gray-300 transition-colors"
           aria-label="Siguiente"
-          @click="next"
         >
-          <svg class="w-4 h-4 -rotate-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-          </svg>
+          <span class="icon-arrow -rotate-90 !bg-dark"></span>
         </button>
       </div>
     </div>

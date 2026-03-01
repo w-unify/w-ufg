@@ -94,16 +94,14 @@ const activeTab = ref(props.tabs?.[0]?.id ?? '')
               <div v-for="paso in tab.pasos" :key="paso.numero" class="step-card">
                 <div class="step-number">{{ paso.numero }}</div>
                 <div class="step-body">
-                  <p v-html="paso.contenido"></p>
+                  <div v-html="paso.contenido"></div>
                 </div>
               </div>
 
               <div v-if="tab.notas && tab.notas.length > 0" class="pt-2">
                 <!-- <p class="font-futura-bold text-dark mb-3">Importante:</p> -->
                 <div class="space-y-4">
-                  <p v-for="(nota, i) in tab.notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed">
-                    {{ nota }}
-                  </p>
+                  <div v-for="(nota, i) in tab.notas" :key="i" class="text-dark/80 text-sm xl:text-base leading-relaxed" v-html="nota"></div>
                 </div>
               </div>
             </div>

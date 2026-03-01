@@ -83,7 +83,22 @@ export default defineEventHandler(async (event) => {
       }))
     } : null
 
-    // ── 4. Costo del programa ─────────────────────────────────────────────────
+    // ── 4. Programas de Doble Titulación ──────────────────────────────────────
+    const programasTituloRaw: any = resolve(data?.programasTitulo)
+    const programasVideoUrlRaw: any = resolve(data?.programasVideoUrl)
+    const programasRequisitosRaw: any = resolve(data?.programasRequisitos)
+    
+    const dobleTitulacion = {
+      titulo: programasTituloRaw,
+      videoUrl: programasVideoUrlRaw,
+      requisitos: programasRequisitosRaw ? (Array.isArray(programasRequisitosRaw) ? programasRequisitosRaw : [programasRequisitosRaw]).map((req: any) => ({
+        titulo: req.titulo,
+        subtitulo: req.subtitulo,
+        contenido: req.texto
+      })) : []
+    }
+
+    // ── 5. Costo del programa ─────────────────────────────────────────────────
     const costoRaw: any = resolve(data?.costoPrograma)
     const costo = costoRaw ? {
       tituloSeccion: costoRaw.tituloSeccion ?? '',
@@ -142,6 +157,7 @@ export default defineEventHandler(async (event) => {
       pasos,
       tabs,
       pov,
+      dobleTitulacion,
       costo,
       beneficios,
       postgradoTabs

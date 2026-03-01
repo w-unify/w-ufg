@@ -1,8 +1,8 @@
 <script setup lang="ts">
 interface RequisitoSlide {
-  titulo: string
-  subtitulo: string
-  contenido: string
+  titulo?: string
+  subtitulo?: string
+  contenido?: string
 }
 
 interface CostoItem {
@@ -12,6 +12,7 @@ interface CostoItem {
 }
 
 interface Props {
+  tituloPrograma?: string
   videoUrl?: string
   requisitos?: RequisitoSlide[]
   tituloSeccion?: string
@@ -21,40 +22,21 @@ interface Props {
   notas?: string[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  videoUrl: 'https://www.youtube.com/embed/o46K1-GRlX4',
-  tituloSeccion: 'Costos del programa de Doble Titulación:',
-  requisitos: () => [
-    {
-      titulo: 'Para inscribirte en UFG (Año 0)',
-      subtitulo: 'Proceso de inscripción a carreras de doble titulación (Nuevo Ingreso)',
-      contenido: '1. Recibir asesoría académica.<br>2. Completar formulario de admisión.<br>3. Pago del curso de inducción universitaria.<br>4. Proceso de documentación en línea.<br>5. Inscripción de asignaturas.<br>6. Pago de aranceles.'
-    },
-    {
-      titulo: 'Para inscribirte en ASU (Año 3)',
-      subtitulo: 'Proceso de inscripción a carreras de doble titulación en ASU',
-      contenido: '1. <strong>Haber cursado todas las asignaturas del ciclo 1 al 6</strong> para cumplir tu requisito académico.<br>2. <strong>Dominio de Idioma Inglés a nivel B2</strong>. Desde el inicio de tu carrera podrás cursar el Programa de Profesionales Bilingües que UFG te ofrece sin costo.<br>3. <strong>Trámite documental y pago de aranceles ASU</strong>, incluyendo transcript de asignaturas aprobadas en UFG.<br>4. <strong>Visa estudiante EEUU</strong> mediante entrevista en la Embajada de EEUU presentando documentación que en UFG y ASU te brindarán.'
-    }
-  ],
-  costos: () => [
-    { label: 'Curso Propedéutico', monto: '$40.00' },
-    { label: 'Costo de Inscripción al Ciclo', monto: '$450.00', bold: true },
-    { label: 'Matrícula', monto: '$225.00' },
-    { label: 'Cuota 01 - Ciclo Académico', monto: '$225.00' },
-    { label: 'Ciclo Académico (Pagadero en 5 cuotas de $225.00 c/u)', monto: '$1125.00' }
-  ],
-  totalLabel: 'Costo Global del Ciclo de Admisión',
-  totalMonto: '$1615.00',
-  notas: () => [
-    'Tendrás 48 horas para pagar, después de haber completado la inscripción en el sistema.',
-    'El arancel por cada asignatura que sea dada por equivalencia externa es de $6.00, los cuales debes pagar dentro de los próximos 4 meses de tu Ciclo de Admisión.',
-    'Deberás presentar la documentación en original en la fecha que se te indique.'
-  ],
-  politicas: () => [
-    'El Programa 3+1 UFG–ASU representa una oportunidad única de formación internacional para estudiantes salvadoreños y de la región, promoviendo el desarrollo de profesionales competitivos, bilingües y con visión global.',
-    'Arizona State University es la universidad pública de investigación más grande de los Estados Unidos, reconocida por su modelo de inclusión, excelencia académica e innovación educativa.',
-    'Más información disponible en: www.asu.edu o en los canales oficiales de la Universidad Francisco Gavidia.'
-  ]
+const props = defineProps<Props>()
+
+const embedUrl = computed(() => {
+  if (!props.videoUrl) return ''
+  
+  // Si ya es una URL embed, devolverla tal cual
+  if (props.videoUrl.includes('/embed/')) return props.videoUrl
+  
+  // Convertir URL de YouTube watch a embed
+  const watchMatch = props.videoUrl.match(/[?&]v=([^&]+)/)
+  if (watchMatch) {
+    return `https://www.youtube.com/embed/${watchMatch[1]}`
+  }
+  
+  return props.videoUrl
 })
 
 </script>
@@ -62,16 +44,16 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <div>
     <!-- Video -->
-    <section class="pt-16 pb-10 xl:pt-24 bg-muted">
+    <section v-if="tituloPrograma || videoUrl" class="pt-16 pb-10 xl:pt-24 bg-muted">
       <div class="container mx-auto max-w-[1000px] px-6 text-center">
-        <h2 class="font-futura-bold text-dark text-2xl xl:text-3xl mb-6 reveal">
-          Programas de Doble Titulación
+        <h2 v-if="tituloPrograma" class="font-futura-bold text-dark text-2xl xl:text-3xl mb-6 reveal">
+          {{ tituloPrograma }}
         </h2>
-        <div class="bg-white rounded-big p-4 xl:p-8 reveal delay-200">
+        <div v-if="embedUrl" class="bg-white rounded-big p-4 xl:p-8 reveal delay-200">
           <div class="relative w-full aspect-video overflow-hidden rounded-card bg-gray-200">
             <iframe
               class="absolute top-0 left-0 w-full h-full"
-              :src="videoUrl"
+              :src="embedUrl"
               title="Programas de Doble Titulación UFG"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -89,11 +71,11 @@ const props = withDefaults(defineProps<Props>(), {
           Requisitos Específicos:
         </h3>
 
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 reveal delay-200">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-5 items-start reveal delay-200">
           <article
             v-for="(req, index) in requisitos"
             :key="index"
-            class="bg-white rounded-card p-6 xl:p-10 flex flex-col border border-dark/5"
+            class="bg-white rounded-card p-6 xl:p-8 border border-dark/5"
           >
             <h4 class="text-primary text-lg xl:text-xl mb-3">{{ req.titulo }}</h4>
             <p class="font-futura-bold text-dark mb-4">{{ req.subtitulo }}</p>

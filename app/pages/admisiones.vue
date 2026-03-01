@@ -77,10 +77,23 @@ interface PostgradoTab {
   notas: string[]
 }
 
+interface RequisitoSlide {
+  titulo?: string
+  subtitulo?: string
+  contenido?: string
+}
+
+interface DobleTitulacionData {
+  titulo?: string
+  videoUrl?: string
+  requisitos?: RequisitoSlide[]
+}
+
 interface AdmisionesData {
   pasos: PasoAdmision[]
   tabs: TabContent[]
   pov: PovData | null
+  dobleTitulacion: DobleTitulacionData | null
   costo: CostoData | null
   beneficios: BeneficiosData | null
   postgradoTabs: PostgradoTab[]
@@ -155,12 +168,15 @@ useHead({
       <!-- Doble Titulación (video + requisitos + costos) -->
       <section id="doble-titulacion">
         <AdmisionesDobleTitulacion
-          v-if="data?.costo"
-          :titulo-seccion="data.costo.tituloSeccion"
-          :costos="data.costo.filas"
-          :total-label="data.costo.totalLabel"
-          :total-monto="data.costo.totalMonto"
-          :notas="data.costo.notas"
+          v-if="data?.dobleTitulacion || data?.costo"
+          :titulo-programa="data.dobleTitulacion?.titulo"
+          :video-url="data.dobleTitulacion?.videoUrl"
+          :requisitos="data.dobleTitulacion?.requisitos"
+          :titulo-seccion="data.costo?.tituloSeccion"
+          :costos="data.costo?.filas"
+          :total-label="data.costo?.totalLabel"
+          :total-monto="data.costo?.totalMonto"
+          :notas="data.costo?.notas"
         />
       </section>
 

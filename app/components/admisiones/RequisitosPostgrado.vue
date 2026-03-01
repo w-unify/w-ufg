@@ -2,9 +2,9 @@
 interface Paso {
   numero: number
   contenido: string
+  imagen?: string
   ctaText?: string
   ctaLink?: string
-  lista?: string[]
 }
 
 interface Props {
@@ -75,11 +75,16 @@ withDefaults(defineProps<Props>(), {
 
               <div class="flex flex-col xl:flex-row xl:items-start gap-2 xl:gap-4">
                 <span class="text-2xl font-futura-bold leading-none shrink-0">{{ paso.numero }}.</span>
-                <div class="pt-1">
-                  <p class="mb-4 xl:mb-6 leading-relaxed">{{ paso.contenido }}</p>
-                  <ul v-if="paso.lista" class="list-disc pl-5 space-y-2 mb-4">
-                    <li v-for="(item, i) in paso.lista" :key="i" class="text-dark/80">{{ item }}</li>
-                  </ul>
+                <div class="pt-1 flex-1">
+                  <div class="mb-4 xl:mb-6 leading-relaxed" v-html="paso.contenido"></div>
+                  
+                  <img 
+                    v-if="paso.imagen" 
+                    :src="paso.imagen" 
+                    :alt="`Paso ${paso.numero}`"
+                    class="w-full max-w-[600px] rounded-lg mb-4 xl:mb-6"
+                  />
+                  
                   <a
                     v-if="paso.ctaText && paso.ctaLink"
                     :href="paso.ctaLink"

@@ -137,17 +137,18 @@ export default defineEventHandler(async (event) => {
       label: tab.tituloTag ?? '',
       pasos: (tab.tagItem ?? []).map((item: any) => {
         const tieneBoton = item.boton?.texto && item.boton?.enlace
-        // descripcion puede ser texto libre o lista separada por \n
-        const descripcionLineas = item.descripcion
-          ? item.descripcion.split('\n').map((l: string) => l.trim()).filter(Boolean)
-          : []
-        const esLista = descripcionLineas.length > 1
+        // Combinar título y descripción en el contenido
+        const contenidoParts = [
+          item.titulo ? `<strong>${item.titulo}</strong>` : '',
+          item.descripcion ?? ''
+        ].filter(Boolean)
+        
         return {
           numero: parseInt(item.pasoNumero ?? '0') || 0,
-          contenido: item.titulo ?? item.descripcion ?? '',
-          ctaText: tieneBoton ? item.boton.texto : '',
-          ctaLink: tieneBoton ? item.boton.enlace : '',
-          lista: !tieneBoton && esLista ? descripcionLineas : (esLista ? descripcionLineas : [])
+          contenido: contenidoParts.join('<br>'),
+          imagen: assetUrl(item.imagen),
+          ctaText: tieneBoton ? item.boton.texto : undefined,
+          ctaLink: tieneBoton ? item.boton.enlace : undefined
         }
       }),
       notas: parseObservaciones(tab.observaciones)

@@ -46,46 +46,44 @@ const modules = [Navigation]
           <div class="relative xl:sticky xl:top-[130px] px-10 xl:px-0">
             
             <!-- Mobile: Swiper -->
-            <Swiper
-              :modules="modules"
-              :slides-per-view="1"
-              :space-between="12"
-              :navigation="{
-                prevEl: '.swiper-prev-lineas',
-                nextEl: '.swiper-next-lineas',
-              }"
-              class="xl:hidden !overflow-hidden"
-              :breakpoints="{
-                1280: {
-                  enabled: false
-                }
-              }"
-            >
-              <SwiperSlide
-                v-for="(tab, i) in tabs"
-                :key="tab.id"
+            <div class="xl:hidden">
+              <Swiper
+                :modules="modules"
+                :slides-per-view="1"
+                :space-between="12"
+                :navigation="{
+                  prevEl: '.swiper-prev-lineas',
+                  nextEl: '.swiper-next-lineas',
+                }"
+                class="overflow-hidden"
+                @slideChange="(swiper) => activeTab = swiper.activeIndex"
               >
-                <button
-                  class="tab-btn w-full"
-                  :class="activeTab === i ? 'active' : ''"
-                  @click="activeTab = i"
+                <SwiperSlide
+                  v-for="(tab, i) in tabs"
+                  :key="tab.id"
                 >
-                  <span class="text-[18px] xl:text-base p-2 xl:p-0">{{ tab.label }}</span>
-                </button>
-              </SwiperSlide>
-            </Swiper>
+                  <button
+                    class="tab-btn w-full"
+                    :class="activeTab === i ? 'active' : ''"
+                    @click="activeTab = i"
+                  >
+                    <span class="text-[18px] p-2">{{ tab.label }}</span>
+                  </button>
+                </SwiperSlide>
+              </Swiper>
 
-            <!-- Botones de navegación mobile -->
-            <button class="swiper-prev-lineas absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
-              <svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-            <button class="swiper-next-lineas absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex xl:hidden items-center justify-center shadow-sm">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+              <!-- Botones de navegación mobile -->
+              <button class="swiper-prev-lineas absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex items-center justify-center shadow-sm">
+                <svg class="w-3 h-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button class="swiper-next-lineas absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-[#E5E5E5] rounded-[4px] flex items-center justify-center shadow-sm">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
 
             <!-- Desktop: vertical list -->
             <div class="hidden xl:flex xl:flex-col xl:gap-4">

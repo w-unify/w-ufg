@@ -32,7 +32,7 @@ useHead({
       <!-- Hero Title -->
       <section class="relative pt-[30px] xl:pt-[40px] 2xl:pt-[170px] pb-[35px] xl:pb-[40px] 2xl:pb-[50px]">
         <div class="container mx-auto max-w-[1400px] px-5">
-          <div class="heading-1" v-html="data?.tituloPagina ?? 'Vida Estudiantil'" />
+          <h1 class="heading-1" v-html="data?.tituloPagina ?? 'Vida Estudiantil'" />
         </div>
       </section>
 
